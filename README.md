@@ -21,3 +21,5 @@ AI Highlight Video Generator
 Dino Maksumic, 20% Programmer, 20% Documentation Lead, 60% Testing Lead
 
 Mohammed Islam, 20% Programmer, 50% Lead Programmer, 30% Client Liaison
+
+David Jones, 40% Programmer, 60% UI designer
