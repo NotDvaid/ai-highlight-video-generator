@@ -53,6 +53,44 @@ Optional / Supporting:
 
 ---
 
+## MVP Non-Goals
+- No audio processing or music syncing
+- No captions or text overlays
+- No advanced AI scene understanding
+- No user customization beyond a simple text prompt
+- No videos longer than the 30-60 second output range
+
+---
+
+## Architecture Overview (MVP)
+[Angular Web App]
+      |
+      | 1) Upload media + prompt
+      v
+[Node.js API Server]
+      |
+      | 2) Store raw files
+      v
+[Amazon S3]  <--- input files (photos/videos)
+      |
+      | 3) Create processing job
+      v
+[n8n Workflow Orchestrator]
+      |
+      | 4) Run FFmpeg processing
+      v
+[FFmpeg Processing Worker]
+      |
+      | 5) Export highlight video
+      v
+[Amazon S3]  <--- output MP4
+      |
+      | 6) Provide download link
+      v
+[Angular Web App]
+
+---
+
 ## Installation Steps
 
 (To be added later)
