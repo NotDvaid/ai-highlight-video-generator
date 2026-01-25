@@ -63,6 +63,8 @@ Optional / Supporting:
 ---
 
 ## Architecture Overview (MVP)
+
+```text
 [Angular Web App]
       |
       | 1) Upload media + prompt
@@ -88,6 +90,7 @@ Optional / Supporting:
       | 6) Provide download link
       v
 [Angular Web App]
+```
 
 ---
 
