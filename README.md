@@ -56,3 +56,14 @@ Optional / Supporting:
 ## Installation Steps
 
 (To be added later)
+
+# Team Name 
+Hydro 
+Spring 2026 
+AI Highlight Video Generator 
+
+# Team roles 
+Dino Maksumic, 20% Programmer, 20% Documentation Lead, 60% Testing Lead 
+Mohammed Islam, 20% Programmer, 50% Lead Programmer, 30% Client Liaison 
+David Jones, 40% Programmer, 60% UI designer 
+Rahsun Mclaurin, 20% Programmer, 60% Data Modeler, 20% Project Manager
