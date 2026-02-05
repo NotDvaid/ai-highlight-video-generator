@@ -19,7 +19,7 @@ Upload → Analysis → Simple Cut → Export
 ## Technologies
 
 Frontend:
-- Angular
+- React / Next.js
 - TypeScript
 - HTML
 - CSS
@@ -65,7 +65,7 @@ Optional / Supporting:
 ## Architecture Overview (MVP)
 
 ```text
-[Angular Web App]
+[React / Next.js Web App]
       |
       | 1) Upload media + prompt
       v
@@ -89,7 +89,7 @@ Optional / Supporting:
       |
       | 6) Provide download link
       v
-[Angular Web App]
+[React / Next.js Web App]
 ```
 
 ---
