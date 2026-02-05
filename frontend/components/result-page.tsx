@@ -20,10 +20,12 @@ export function ResultPage({ onBack, onRegenerate }: ResultPageProps) {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-accent-foreground" />
-            </div>
-            <span className="font-semibold text-lg text-foreground">Highlight AI</span>
+            <img 
+              src="/logo.png" 
+              alt="Impact Reel logo" 
+              className="w-40 h-30 rounded-lg"
+            />
+            <span className="font-semibold text-lg text-foreground">Impact Reels</span>
           </div>
         </div>
       </header>
