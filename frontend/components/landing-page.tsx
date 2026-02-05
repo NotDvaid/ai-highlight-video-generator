@@ -36,11 +36,13 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
       <header className="border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-accent-foreground" />
-            </div>
-            <span className="font-semibold text-lg text-foreground">Highlight AI</span>
-          </div>
+            <img 
+              src="/logo.png" 
+              alt="Impact Reels logo" 
+              className="w-40 h-30 rounded-lg"
+            />
+            <span className="font-semibold text-lg text-foreground">Impact Reels</span>
+        </div>
           <Button onClick={onGetStarted} size="sm">
             Get Started
           </Button>
