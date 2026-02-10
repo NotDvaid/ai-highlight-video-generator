@@ -37,8 +37,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
-        {children}
+      <body className={`font-sans antialiased relative`}>
+        {/* Animated Grid Background */}
+        <div className="grid-background" aria-hidden="true" />
+        <div className="grid-accent-glow" aria-hidden="true" />
+        
+        {/* Main Content */}
+        <div className="relative z-0">
+          {children}
+        </div>
+        
         <Analytics />
       </body>
     </html>
