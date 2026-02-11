@@ -81,11 +81,11 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
         </div>
 
         <div className="mt-24 w-full max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="home-feature-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="p-6 rounded-xl bg-card border border-border hover:border-accent/50 transition-colors"
+                className="home-feature-card p-6 bg-card border border-border hover:border-accent/50 transition-colors"
               >
                 <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center mb-4">
                   <feature.icon className="w-5 h-5 text-accent" />
