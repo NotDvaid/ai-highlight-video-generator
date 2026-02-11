@@ -2,16 +2,14 @@ import React from "react"
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import "./interfaceSettings.css";
-import { ThemeProvider } from "../components/theme-provider";
-import SettingsButton from "../components/SettingsButton";
-
+import { ThemeProvider } from '@/components/theme-provider'
+import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Highlight AI - Instant Video Highlights',
+  title: 'Impact Reels - AI-Powered Highlight Videos',
   description: 'Upload your media and let AI generate beautiful highlight videos in seconds. Perfect for nonprofits and community organizations.',
   generator: 'v0.app',
   icons: {
@@ -39,24 +37,19 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-  <html lang="en" suppressHydrationWarning>
-    <body className="font-sans antialiased relative">
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        {/* Animated Grid Background */}
-        <div className="grid-background" aria-hidden="true" />
-        <div className="grid-accent-glow" aria-hidden="true" />
-
-        {/* Main Content */}
-        <div className="relative z-0">
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans antialiased">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
           {children}
-        </div>
-
-        {/* Floating settings button */}
-        <SettingsButton />
-
+        </ThemeProvider>
+        
         <Analytics />
-      </ThemeProvider>
-    </body>
-  </html>
-)
+      </body>
+    </html>
+  )
 }
