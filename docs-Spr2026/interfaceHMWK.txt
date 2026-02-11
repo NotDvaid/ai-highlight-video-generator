@@ -1,0 +1,11 @@
+Global CSS file:
+interfaceSettings.css
+Path: src/app/interfaceSettings.css
+
+David implemented the following global variables:
+
+--home-card-radius
+Used on: feature cards on the home page (landing-page.tsx)
+
+--home-feature-gap
+Used on: feature grid spacing on the home page (landing-page.tsx)
