@@ -5,9 +5,10 @@ import { Upload, Sparkles, Download, Zap } from "lucide-react";
 
 interface LandingPageProps {
   onAbout: () => void;
+  onCreateHighlight: () => void;
 }
 
-export function LandingPage({onAbout}: LandingPageProps) {
+  export function LandingPage({onAbout, onCreateHighlight}: LandingPageProps) {
   const features = [
     {
       icon: Upload,
@@ -43,7 +44,7 @@ export function LandingPage({onAbout}: LandingPageProps) {
             />
             <span className="font-semibold text-lg text-foreground">Impact Reels</span>
         </div>
-          <Button onClick={onAbout} size="sm" variant="outline">
+          <Button onClick={onAbout} size="sm" variant="ghost">
             About Us
           </Button>
         </div>
@@ -69,7 +70,7 @@ export function LandingPage({onAbout}: LandingPageProps) {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button size="lg" onClick={onAbout} className="text-lg px-8 py-6">
+            <Button size="lg" onClick={onCreateHighlight} className="text-lg px-8 py-6">
               Create Highlight Video
             </Button>
           </div>

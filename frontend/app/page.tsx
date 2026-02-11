@@ -19,6 +19,8 @@ export default function Home() {
     setState("landing");
   };
 
+  const handleCreateHighlight = () => setState("upload");
+
   const handleAbout = () => setState("about");
 
   const handleBackFromAbout = () => setState("landing");
@@ -43,7 +45,7 @@ export default function Home() {
 
   return (
     <>
-      {state === "landing" && (<LandingPage onAbout={handleAbout} />
+      {state === "landing" && (<LandingPage onAbout={handleAbout} onCreateHighlight={handleCreateHighlight} />
       )}
       {state === "upload" && (
         <UploadPage onBack={handleBack} onGenerate={handleGenerate} />
