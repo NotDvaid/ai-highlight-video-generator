@@ -9,3 +9,9 @@ Used on: feature cards on the home page (landing-page.tsx)
 
 --home-feature-gap
 Used on: feature grid spacing on the home page (landing-page.tsx)
+
+Mohammed implmented the following:
+
+Template of the frontend before any changes whatsoever
+
+Assistant to creating the light/dark mode, and the about us page
