@@ -105,7 +105,7 @@ Completed:
 
 In Progress:
 - S3 upload integration
-- Job status tracking
+
 
 Next:
 - n8n + FFmpeg processing pipeline
