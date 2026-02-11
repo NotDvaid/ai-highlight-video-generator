@@ -37,7 +37,10 @@
   --sidebar-accent-foreground: oklch(0.13 0 0);
   --sidebar-border: oklch(0.88 0 0);
   --sidebar-ring: #F3BD1C;
+  /* David – UI global variables */
+
 }
+
 
 .dark {
   --background: oklch(0.13 0 0);
@@ -122,4 +125,29 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+/* David – UI global variables */
+
+:root {
+  --home-card-radius: 1rem;
+  --home-feature-gap: 1rem;
+}
+
+/* Mobile-friendly overrides */
+@media (max-width: 768px) {
+  :root {
+    --home-card-radius: 0.75rem;
+    --home-feature-gap: 1rem; /* keep spacing comfy on phones */
+  }
+}
+
+/* Elements using the variables on the home page */
+
+.home-feature-card {
+  border-radius: var(--home-card-radius);
+  min-height: 9.5rem;
+}
+
+.home-feature-grid {
+  gap: var(--home-feature-gap);
 }
