@@ -18,6 +18,11 @@
   --muted-foreground: oklch(0.40 0 0);
   --accent: #F3BD1C;
   --accent-foreground: oklch(0.13 0 0);
+  /* Dino - About page global variables */
+  --about-card-padding:1.5rem;
+  --about-card-radius:1rem;
+  --about-feature-gap:1rem;
+  /* ----------------------------------- */
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.88 0 0);
@@ -139,6 +144,14 @@
     --home-card-radius: 0.75rem;
     --home-feature-gap: 1rem; /* keep spacing comfy on phones */
   }
+}
+/* Dino - About page global variables */
+.about-card {
+  padding: var(--about-card-padding);
+  border-radius: var(--about-card-radius);
+}
+.about-feature-grid {
+  gap: var(--about-feature-gap);
 }
 
 /* Elements using the variables on the home page */
