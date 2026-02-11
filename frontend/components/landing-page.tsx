@@ -1,14 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Upload, Sparkles, Download, Zap } from "lucide-react";
 
 interface LandingPageProps {
-  onAbout: () => void;
-  onCreateHighlight: () => void;
+  onGetStarted: () => void;
 }
 
-  export function LandingPage({onAbout, onCreateHighlight}: LandingPageProps) {
+export function LandingPage({ onGetStarted }: LandingPageProps) {
   const features = [
     {
       icon: Upload,
@@ -42,11 +43,14 @@ interface LandingPageProps {
               alt="Impact Reels logo" 
               className="w-40 h-30 rounded-lg"
             />
-            <span className="font-semibold text-lg text-foreground">Impact Reels</span>
-        </div>
-          <Button onClick={onAbout} size="sm" variant="ghost">
-            About Us
-          </Button>
+            <span className="font-bold text-2xl md:text-3xl text-foreground">Impact Reels</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button asChild size="sm" variant="outline">
+              <Link href="/about">About This Project</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -70,7 +74,7 @@ interface LandingPageProps {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button size="lg" onClick={onCreateHighlight} className="text-lg px-8 py-6">
+            <Button size="lg" onClick={onGetStarted} className="text-lg px-8 py-6">
               Create Highlight Video
             </Button>
           </div>
