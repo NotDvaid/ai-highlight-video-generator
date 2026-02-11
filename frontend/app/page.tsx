@@ -5,21 +5,23 @@ import { LandingPage } from "@/components/landing-page";
 import { UploadPage } from "@/components/upload-page";
 import { ProcessingPage } from "@/components/processing-page";
 import { ResultPage } from "@/components/result-page";
+import { AboutPage } from "@/components/about-page";
 
-type AppState = "landing" | "upload" | "processing" | "result";
+type AppState = "landing" | "about" | "upload" | "processing" | "result";
 
 export default function Home() {
   const [state, setState] = useState<AppState>("landing");
   const [, setUploadedFiles] = useState<File[]>([]);
   const [, setEventDescription] = useState("");
 
-  const handleGetStarted = () => {
-    setState("upload");
-  };
 
   const handleBack = () => {
     setState("landing");
   };
+
+  const handleAbout = () => setState("about");
+
+  const handleBackFromAbout = () => setState("landing");
 
   const handleGenerate = (files: File[], description: string) => {
     setUploadedFiles(files);
@@ -41,7 +43,8 @@ export default function Home() {
 
   return (
     <>
-      {state === "landing" && <LandingPage onGetStarted={handleGetStarted} />}
+      {state === "landing" && (<LandingPage onAbout={handleAbout} />
+      )}
       {state === "upload" && (
         <UploadPage onBack={handleBack} onGenerate={handleGenerate} />
       )}
@@ -50,6 +53,9 @@ export default function Home() {
       )}
       {state === "result" && (
         <ResultPage onBack={handleBackToUpload} onRegenerate={handleRegenerate} />
+      )}
+      {state === "about" && (
+        <AboutPage onBack={handleBackFromAbout} />
       )}
     </>
   );
