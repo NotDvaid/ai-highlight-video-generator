@@ -21,7 +21,7 @@
   /* Dino - About page global variables */
   --about-card-padding:1.5rem;
   --about-card-radius:1rem;
-  --about-feature-gap:1rem;
+  --about-feature-gap:1rem; 
   /* ----------------------------------- */
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0 0);
