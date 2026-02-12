@@ -43,7 +43,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               alt="Impact Reels logo" 
               className="w-40 h-30 rounded-lg"
             />
-            <span className="font-bold text-2xl md:text-3xl text-foreground truncate">Impact Reels</span>
+            <span className="font-bold text-2xl md:text-5xl text-foreground truncate">Impact Reels</span>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
             <ThemeToggle />

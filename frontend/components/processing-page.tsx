@@ -55,7 +55,7 @@ export function ProcessingPage({ onComplete }: ProcessingPageProps) {
               alt="Impact Reels logo" 
               className="w-40 h-30 rounded-lg"
             />
-            <span className="font-bold text-2xl md:text-3xl text-foreground">Impact Reels</span>
+            <span className="font-bold text-2xl md:text-5xl text-foreground">Impact Reels</span>
           </div>
           <ThemeToggle />
         </div>
