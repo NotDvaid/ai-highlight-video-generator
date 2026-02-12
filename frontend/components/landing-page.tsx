@@ -36,16 +36,16 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+         <div className="container mx-auto px-4 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 win-w-0">
             <img 
               src="/logo.png" 
               alt="Impact Reels logo" 
               className="w-40 h-30 rounded-lg"
             />
-            <span className="font-bold text-2xl md:text-3xl text-foreground">Impact Reels</span>
+            <span className="font-bold text-2xl md:text-3xl text-foreground truncate">Impact Reels</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
             <ThemeToggle />
             <Button asChild size="sm" variant="outline">
               <Link href="/about">About This Project</Link>
