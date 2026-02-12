@@ -10,6 +10,14 @@ Used on: feature cards on the home page (landing-page.tsx)
 --home-feature-gap
 Used on: feature grid spacing on the home page (landing-page.tsx)
 
+Dino implemented the following global variables:
+--about-card-padding
+Used on : About page cards for consistent padding (about/page.tsx)
+--about-card-radius
+Used on: About page cars for rounded corners (about/page.tsx)
+--about-feature-gap
+Used on: feature grid spacing on the About page (about/page.tsx)
+
 Rahsun implemented these variables:
  --touch-target-min: 3rem; //Miniumum size fr buttons on larger devices
 // Added to help with visibility for smaller devices
