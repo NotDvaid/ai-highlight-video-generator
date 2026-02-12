@@ -16,3 +16,8 @@ Rahsun implemented these variables:
    --touch-target-size: 2.5rem;
   --button-height: 2.5rem;
   --input-height: 2.5rem;
+
+
+Mohammed implemented these variables :
+--color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
