@@ -32,7 +32,7 @@ Automation / Workflow:
 - n8n
 
 Storage:
-- Amazon S3 (client-provided)
+- MinIO
 
 Optional / Supporting:
 - Supabase (authentication and metadata)
@@ -73,7 +73,7 @@ Optional / Supporting:
       |
       | 2) Store raw files
       v
-[Amazon S3]  <--- input files (photos/videos)
+[MinIO]  <--- input files (photos/videos)
       |
       | 3) Create processing job
       v
