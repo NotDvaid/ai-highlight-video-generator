@@ -5,6 +5,7 @@ import { ArrowLeft, Upload, Sparkles, Download, Zap, Heart } from "lucide-react"
 
 export default function AboutPage() {
   const features = [
+
   {
     icon: Upload,
     title: "Upload Multiple Files",
@@ -30,6 +31,7 @@ export default function AboutPage() {
       "You don't need any video editing experience. Simply upload your media, add an optional description, and let the AI handle the rest. It's that simple.",
   },
 ];
+
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -99,7 +101,9 @@ export default function AboutPage() {
               {features.map((feature) => (
                 <div
                   key={feature.title}
+
                    className="about-card bg-card border border-border hover:border-accent/50 transition-colors"
+
                 >
                   <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center mb-4">
                     <feature.icon className="w-5 h-5 text-accent" />
