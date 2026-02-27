@@ -47,7 +47,16 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
             <ThemeToggle />
-            <Button asChild size="sm" variant="outline">
+            <Button
+              asChild
+              size="sm"
+              className="
+              border border-border bg-transparent text-foreground
+              hover:bg-accent hover:text-accent-foreground
+              dark:border-muted-foreground/40 dark:text-white
+              dark:hover:bg-yellow dark:hover:text-black
+            "
+            >
               <Link href="/about">About This Project</Link>
             </Button>
           </div>
