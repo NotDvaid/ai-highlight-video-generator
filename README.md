@@ -24,9 +24,12 @@ Frontend:
 - HTML
 - CSS
 
-Backend / Processing:
-- Node.js
+Backend:
+- FastAPI
+
+Video Processing
 - FFmpeg
+- MoviePy
 
 Automation / Workflow:
 - n8n
@@ -47,7 +50,7 @@ Optional / Supporting:
 - Automatic generation of 30–60 second highlight video
 - Silent video output (audio not included in MVP)
 - Download/export generated video
-- Storage of input and output media in Amazon S3
+- Media stored using MinIO object storage
 - Lightweight, simple, and visually clean web UI
 - Basic processing status (processing / completed / failed)
 
@@ -69,23 +72,25 @@ Optional / Supporting:
       |
       | 1) Upload media + prompt
       v
-[Node.js API Server]
+[FastAPI Backend Service]
       |
-      | 2) Store raw files
+      | 2) Store uploaded media
       v
-[MinIO]  <--- input files (photos/videos)
+[MinIO Object Storage]  <--- input files (photos/videos)
       |
       | 3) Create processing job
       v
-[n8n Workflow Orchestrator]
+[Ai Processing Service]
       |
-      | 4) Run FFmpeg processing
+      | 4) - Scene detection
+      |    - Highlight selection
+      |    - Clip extraction
       v
-[FFmpeg Processing Worker]
+[FFmpeg / MoviePy]
       |
-      | 5) Export highlight video
+      | 5) Video assembly
       v
-[Amazon S3]  <--- output MP4
+[MinIO Output Storage]  <--- output MP4
       |
       | 6) Provide download link
       v
@@ -94,26 +99,72 @@ Optional / Supporting:
 
 ---
 ## Current Sprint Status
+Sprint Goal
 
-Sprint Goal:
-Implement core upload → processing pipeline UI and job flow.
-
-Completed:
-- Next.js frontend setup
-- Initial upload UI
-- Basic project architecture defined
-
-In Progress:
-- S3 upload integration
-
-
-Next:
-- n8n + FFmpeg processing pipeline
+Implement the core upload → AI processing → video export pipeline.
 ---
-## Installation Steps
 
-(To be added later)
+Completed
 
+Next.js frontend interface
+
+File upload UI
+
+FastAPI backend service
+
+Basic highlight generation pipeline
+
+FFmpeg video processing integration
+---
+
+In Progress
+
+Scene detection integration
+
+Highlight ranking improvements
+
+Output video generation pipeline
+---
+
+Next Steps
+
+Improve scene ranking logic
+
+Add job queue for video processing
+
+Improve frontend progress feedback
+
+Integrate storage fully with MinIO
+
+
+## Installation (Development)
+
+Clone the repository:
+
+git clone <repo-url>
+cd AIvideoGenerator
+---
+Start Backend
+cd ai-service
+python -m venv .venv
+source .venv/Scripts/activate
+pip install -r requirements.txt
+python -m uvicorn server:app --reload
+---
+Start Frontend
+cd frontend
+npm install
+npm run dev
+---
+
+Frontend runs on:
+
+http://localhost:3000
+
+Backend runs on:
+
+http://127.0.0.1:8000
+---
 # Team Name 
 
 Hydro 
