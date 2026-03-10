@@ -15,19 +15,19 @@ export default function AboutPage() {
       icon: Sparkles,
       title: "AI-Powered Selection",
       description:
-        "Our AI analyzes every piece of media you upload, identifies the most compelling moments, and intelligently selects the best content to feature in your highlight reel.",
+        "Our AI analyzes every piece of media you upload, identifies the most compelling moments, and selects the best content for your highlight reel.",
     },
     {
       icon: Download,
       title: "Export and Share",
       description:
-        "Once your highlight video is generated, download it instantly as a high-quality MP4 file ready to share on social media, in presentations, or with your community.",
+        "Once your highlight video is generated, download it instantly as a high-quality MP4 file ready to share anywhere.",
     },
     {
       icon: Zap,
       title: "No Editing Skills Required",
       description:
-        "You don't need any video editing experience. Simply upload your media, add an optional description, and let the AI handle the rest. It's that simple.",
+        "You don't need any video editing experience. Simply upload your media and let the AI handle the rest.",
     },
   ];
 
@@ -60,10 +60,9 @@ export default function AboutPage() {
         </Button>
       </div>
 
-      {/* BACKGROUND WRAPPER */}
+      {/* BACKGROUND */}
       <div className="page-background flex-1">
 
-        {/* MAIN */}
         <main className="container mx-auto px-4 py-12 max-w-6xl">
 
           <div className="space-y-12">
@@ -76,13 +75,13 @@ export default function AboutPage() {
 
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 A free tool built to help nonprofits and community organizations
-                turn their event media into professional highlight videos,
-                powered by AI.
+                turn event media into professional highlight videos powered by AI.
               </p>
             </div>
 
             {/* WHY WE BUILT THIS */}
             <div className="about-card bg-card border border-border space-y-4">
+
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center">
                   <Heart className="w-5 h-5 text-accent" />
@@ -94,19 +93,17 @@ export default function AboutPage() {
               </div>
 
               <p className="text-muted-foreground leading-relaxed">
-                Nonprofits and community organizations do incredible work every
-                day, but they often lack the resources or technical expertise to
-                create polished video content from their events. Impact Reels
-                bridges that gap by providing an easy-to-use, AI-powered tool
-                that transforms raw event media into shareable highlight reels —
-                no editing experience needed.
+                Nonprofits and community organizations do incredible work every day,
+                but they often lack the resources or technical expertise to create
+                polished video content from their events.
               </p>
 
               <p className="text-muted-foreground leading-relaxed">
-                Whether it is a charity fundraiser, a volunteer appreciation day,
-                or a community picnic, Impact Reels helps you capture and share
-                the moments that matter most.
+                Impact Reels bridges that gap by providing an easy-to-use AI tool
+                that transforms raw event media into shareable highlight reels —
+                no editing experience required.
               </p>
+
             </div>
 
             {/* HOW IT WORKS */}
@@ -138,6 +135,7 @@ export default function AboutPage() {
                 ))}
 
               </div>
+
             </div>
 
             {/* CTA */}

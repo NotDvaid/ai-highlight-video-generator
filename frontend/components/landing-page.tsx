@@ -39,12 +39,14 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
       {/* HEADER */}
       <header className="border-b border-border">
         <div className="container mx-auto px-4 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
           <div className="flex items-center gap-2 min-w-0">
             <img
               src="/logo.png"
               alt="Impact Reels logo"
               className="w-40 h-auto rounded-lg"
             />
+
             <span className="font-bold text-2xl md:text-5xl text-foreground truncate">
               Impact Reels
             </span>
@@ -62,6 +64,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               <Link href="/about">About This Project</Link>
             </Button>
           </div>
+
         </div>
       </header>
 
@@ -86,8 +89,8 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Upload your photos and videos. Our AI selects the best moments and
-              creates a beautiful 30-60 second highlight reel. Perfect for
-              nonprofits and community events.
+              creates a beautiful 30–60 second highlight reel.
+              Perfect for nonprofits and community events.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
