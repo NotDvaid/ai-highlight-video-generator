@@ -144,3 +144,19 @@ ai-service/outputs/
 ai-service/frames/
 ai-service/*.pkl
 __pycache__/
+
+# Python virtual environments
+venv/
+ai-service/venv/
+
+# MinIO storage data
+storage/minio-data/*
+!storage/minio-data/.gitkeep
+
+# Local uploads / generated videos
+uploads/
+outputs/
+
+# OS files
+.DS_Store
+Thumbs.db
