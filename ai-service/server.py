@@ -6,6 +6,8 @@ import shutil
 import os
 import joblib
 import uuid
+import cv2
+import numpy as np
 
 from ffmpeg_editor import FFmpegEditor
 from feature_extractor import VideoFeatureExtractor
@@ -194,3 +196,40 @@ async def get_metadata(filepath: str):
 @app.get("/progress")
 def get_progress():
     return progress_status
+
+def extract_features_from_clip(video_path: str, start: float, end: float):
+    """Extract real features from a video segment."""
+    cap = cv2.VideoCapture(video_path)
+    cap.set(cv2.CAP_PROP_POS_MSEC, start * 1000)
+    
+    frames = []
+    brightnesses = []
+    
+    while cap.get(cv2.CAP_PROP_POS_MSEC) < end * 1000:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        frames.append(frame)
+        # Brightness: average pixel intensity
+        brightnesses.append(np.mean(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)))
+    
+    cap.release()
+    
+    if len(frames) < 2:
+        return [0.0, 0.0, 0.0]
+    
+    # Motion: average frame-to-frame difference
+    diffs = []
+    for i in range(1, len(frames)):
+        diff = cv2.absdiff(frames[i], frames[i-1])
+        diffs.append(np.mean(diff))
+    motion = np.mean(diffs) / 255.0  # normalize to 0-1
+    
+    # Brightness: normalized average
+    brightness = np.mean(brightnesses) / 255.0
+    
+    # Sharpness: Laplacian variance (measures focus/detail)
+    sharpness = np.mean([cv2.Laplacian(cv2.cvtColor(f, cv2.COLOR_BGR2GRAY), cv2.CV_64F).var() for f in frames])
+    sharpness = min(sharpness / 500.0, 1.0)  # normalize
+    
+    return [motion, brightness, sharpness]
