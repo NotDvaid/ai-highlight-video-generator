@@ -9,6 +9,7 @@ import uuid
 
 from ffmpeg_editor import FFmpegEditor
 from feature_extractor import VideoFeatureExtractor
+from minio_client import upload_file
 
 app = FastAPI()
 
@@ -118,6 +119,10 @@ async def create_highlight(
     output_name = f"highlight_{uuid.uuid4()}.mp4"
     output_path = os.path.join(OUTPUT_FOLDER, output_name)
     FFmpegEditor.trim_clip(concat_path, output_path, 0, 60)
+    
+    # Upload highlight video to MinIO
+    video_url = upload_file(output_path, f"videos/{output_name}")
+    print("Uploaded highlight video to MinIO:", video_url)
 
     # Clean up temporary files
     for d in temp_dirs:
@@ -133,7 +138,7 @@ async def create_highlight(
     return {
         "message": "Highlight created",
         "prompt": prompt,
-        "output": f"outputs/{output_name}"
+        "video_url": video_url
     }
 
 
