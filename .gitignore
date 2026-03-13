@@ -137,3 +137,10 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# AI service generated/binary files
+ai-service/uploads/
+ai-service/outputs/
+ai-service/frames/
+ai-service/*.pkl
+__pycache__/

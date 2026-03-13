@@ -5,7 +5,8 @@ import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ArrowLeft, Upload, X, FileImage, FileVideo } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Upload, X, FileImage, FileVideo, Sparkles } from "lucide-react";
 
 interface UploadPageProps {
   onBack: () => void;
