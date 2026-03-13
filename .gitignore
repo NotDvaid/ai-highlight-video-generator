@@ -152,6 +152,7 @@ ai-service/venv/
 # MinIO storage data
 storage/minio-data/*
 !storage/minio-data/.gitkeep
+storage/minio.exe
 
 # Local uploads / generated videos
 uploads/
@@ -160,3 +161,4 @@ outputs/
 # OS files
 .DS_Store
 Thumbs.db
+
