@@ -2,9 +2,11 @@
   "name": "ai-video-generator",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "setup": "npm install && cd frontend && npm install && cd ../ai-service && pip install -r requirements.txt",
+    "dev": "concurrently \"npm run minio\" \"npm run frontend\" \"npm run backend\"",
     "frontend": "cd frontend && npm run dev",
-    "backend": "cd ai-service && python -m uvicorn server:app --reload"
+    "backend": "cd ai-service && python -m uvicorn server:app --reload",
+    "minio": "cd storage && minio.exe server minio-data --console-address :9001"
   },
   "dependencies": {
     "cors": "^2.8.6",
