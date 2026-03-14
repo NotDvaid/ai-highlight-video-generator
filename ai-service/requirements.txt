@@ -6,4 +6,8 @@ opencv-python-headless
 numpy
 scikit-learn
 joblib
+<<<<<<< HEAD
 opencv-python
+=======
+minio
+>>>>>>> main

@@ -6,11 +6,18 @@ import shutil
 import os
 import joblib
 import uuid
+<<<<<<< HEAD
 import cv2
 import numpy as np
 
 from ffmpeg_editor import FFmpegEditor
 from feature_extraction import extract_features_from_clip
+=======
+
+from ffmpeg_editor import FFmpegEditor
+from feature_extractor import VideoFeatureExtractor
+from minio_client import upload_file
+>>>>>>> main
 
 app = FastAPI()
 
@@ -82,7 +89,15 @@ async def create_highlight(
                 seg_path = os.path.join(OUTPUT_FOLDER, f"seg_{uuid.uuid4()}.mp4")
                 FFmpegEditor.trim_clip(input_path, seg_path, start, end)
 
+<<<<<<< HEAD
                 features = extract_features_from_clip(input_path, start, end)
+=======
+                frames_dir = os.path.join(OUTPUT_FOLDER, f"frames_{uuid.uuid4()}")
+                frames = FFmpegEditor.extract_frames(seg_path, frames_dir, fps=1)
+                temp_dirs.append(frames_dir)
+
+                features = VideoFeatureExtractor.extract_features(frames)
+>>>>>>> main
                 score = model.predict_proba([features])[0][1]
 
                 scored_segments.append((score, seg_path))
@@ -116,6 +131,13 @@ async def create_highlight(
     output_name = f"highlight_{uuid.uuid4()}.mp4"
     output_path = os.path.join(OUTPUT_FOLDER, output_name)
     FFmpegEditor.trim_clip(concat_path, output_path, 0, 60)
+<<<<<<< HEAD
+=======
+    
+    # Upload highlight video to MinIO
+    video_url = upload_file(output_path, f"videos/{output_name}")
+    print("Uploaded highlight video to MinIO:", video_url)
+>>>>>>> main
 
     # Clean up temporary files
     for d in temp_dirs:
@@ -131,7 +153,11 @@ async def create_highlight(
     return {
         "message": "Highlight created",
         "prompt": prompt,
+<<<<<<< HEAD
         "output": f"outputs/{output_name}"
+=======
+        "video_url": video_url
+>>>>>>> main
     }
 
 
@@ -164,6 +190,10 @@ async def edit_video(
             break
 
     if applied is None:
+<<<<<<< HEAD
+=======
+        # No recognised filter — return the original file as-is
+>>>>>>> main
         shutil.copy(input_path, output_path)
 
     return {
