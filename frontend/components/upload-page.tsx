@@ -15,7 +15,8 @@ interface UploadPageProps {
 
 export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
   const [files, setFiles] = useState<File[]>([]);
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(""
+  );
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -111,11 +112,11 @@ export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`
-                border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer
+              className={
+                `border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer
                 bg-card shadow-sm
-                ${isDragging ? "border-accent bg-accent/10" : "border-border hover:border-muted-foreground"}
-              `}
+                ${isDragging ? "border-accent bg-accent/10" : "border-border hover:border-muted-foreground"}`
+              }
               onClick={() => document.getElementById("file-input")?.click()}
             >
               <input

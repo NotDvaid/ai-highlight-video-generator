@@ -98,13 +98,23 @@ class FFmpegEditor:
 
     @staticmethod
     def create_image_clip(image_path: str, output_path: str, duration: float = 3, fps: int = 24):
-        (
-            ffmpeg
-            .input(image_path, loop=1, t=duration)
-            .output(output_path, vcodec="libx264", pix_fmt="yuv420p", r=fps, t=duration)
-            .overwrite_output()
-            .run(quiet=True)
-        )
+        print("INPUT IMAGE:", image_path)
+        print("OUTPUT VIDEO:", output_path)
+        print("FILE EXISTS:", os.path.exists(image_path))
+
+        try:
+            (
+                ffmpeg
+                .input(image_path, loop=1, t=duration)
+                .filter("scale", "trunc(iw/2)2", "trunc(ih/2)2")  # FIX
+                .output(output_path, vcodec="libx264", pix_fmt="yuv420p", r=fps)
+                .overwrite_output()
+                .run(capture_stdout=True, capture_stderr=True)
+            )
+        except ffmpeg.Error as e:
+            print("FFMPEG STDOUT:", e.stdout.decode())
+            print("FFMPEG STDERR:", e.stderr.decode())
+            raise
 
     @staticmethod
     def normalize_clip(input_path: str, output_path: str, width: int = 1920, height: int = 1080, fps: int = 24):

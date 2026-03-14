@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 
 from ffmpeg_editor import FFmpegEditor
-from feature_extractor import VideoFeatureExtractor
+from feature_extraction import extract_features_from_clip
 
 app = FastAPI()
 
@@ -82,11 +82,7 @@ async def create_highlight(
                 seg_path = os.path.join(OUTPUT_FOLDER, f"seg_{uuid.uuid4()}.mp4")
                 FFmpegEditor.trim_clip(input_path, seg_path, start, end)
 
-                frames_dir = os.path.join(OUTPUT_FOLDER, f"frames_{uuid.uuid4()}")
-                frames = FFmpegEditor.extract_frames(seg_path, frames_dir, fps=1)
-                temp_dirs.append(frames_dir)
-
-                features = VideoFeatureExtractor.extract_features(frames)
+                features = extract_features_from_clip(input_path, start, end)
                 score = model.predict_proba([features])[0][1]
 
                 scored_segments.append((score, seg_path))
@@ -168,7 +164,6 @@ async def edit_video(
             break
 
     if applied is None:
-        # No recognised filter — return the original file as-is
         shutil.copy(input_path, output_path)
 
     return {
@@ -196,40 +191,3 @@ async def get_metadata(filepath: str):
 @app.get("/progress")
 def get_progress():
     return progress_status
-
-def extract_features_from_clip(video_path: str, start: float, end: float):
-    """Extract real features from a video segment."""
-    cap = cv2.VideoCapture(video_path)
-    cap.set(cv2.CAP_PROP_POS_MSEC, start * 1000)
-    
-    frames = []
-    brightnesses = []
-    
-    while cap.get(cv2.CAP_PROP_POS_MSEC) < end * 1000:
-        ret, frame = cap.read()
-        if not ret:
-            break
-        frames.append(frame)
-        # Brightness: average pixel intensity
-        brightnesses.append(np.mean(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)))
-    
-    cap.release()
-    
-    if len(frames) < 2:
-        return [0.0, 0.0, 0.0]
-    
-    # Motion: average frame-to-frame difference
-    diffs = []
-    for i in range(1, len(frames)):
-        diff = cv2.absdiff(frames[i], frames[i-1])
-        diffs.append(np.mean(diff))
-    motion = np.mean(diffs) / 255.0  # normalize to 0-1
-    
-    # Brightness: normalized average
-    brightness = np.mean(brightnesses) / 255.0
-    
-    # Sharpness: Laplacian variance (measures focus/detail)
-    sharpness = np.mean([cv2.Laplacian(cv2.cvtColor(f, cv2.COLOR_BGR2GRAY), cv2.CV_64F).var() for f in frames])
-    sharpness = min(sharpness / 500.0, 1.0)  # normalize
-    
-    return [motion, brightness, sharpness]
