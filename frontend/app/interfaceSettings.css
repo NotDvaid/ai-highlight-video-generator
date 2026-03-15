@@ -28,12 +28,7 @@
 
   --accent: #F3BD1C;
   --accent-foreground: oklch(0.13 0 0);
-<<<<<<< HEAD
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.98 0 0);
-=======
 
->>>>>>> main
   --border: oklch(0.88 0 0);
   --input: oklch(0.92 0 0);
 
@@ -52,7 +47,6 @@
   --sidebar-accent-foreground: oklch(0.13 0 0);
   --sidebar-border: oklch(0.88 0 0);
   --sidebar-ring: #F3BD1C;
-  /* David – UI global variables */
 
 
   --ring: #F3BD1C;
@@ -154,50 +148,6 @@
   position: relative;
 }
 
-<<<<<<< HEAD
-/* Mobile-friendly overrides */
-@media (max-width: 768px) {
-  :root {
-    --home-card-radius: 0.75rem;
-    --home-feature-gap: 1rem; /* keep spacing comfy on phones */
-  }
-}
-
-/* Additional mobile-friendly variables */
-:root {
-  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --touch-target-size: 2.5rem;
-  --button-height: 2.5rem;
-  --input-height: 2.5rem;
-}
-
-/* Mobile-friendly overrides for new variables */
-@media (max-width: 768px) {
-  :root {
-    --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --touch-target-size: 3rem;
-    --button-height: 3rem;
-    --input-height: 3rem;
-  }
-}
-
-/* Example usage classes */
-.interactive-card {
-  box-shadow: var(--card-shadow);
-}
-
-.mobile-button {
-  height: var(--button-height);
-  min-height: var(--touch-target-size);
-}
-
-.mobile-input {
-  height: var(--input-height);
-}
-
-
-/* Elements using the variables on the home page */
-=======
 .page-background::before {
   content: "";
   position: absolute;
@@ -235,7 +185,6 @@
 /* -------------------------------- */
 /* FEATURE CARDS */
 /* -------------------------------- */
->>>>>>> main
 
 .home-feature-card {
   border-radius: var(--home-card-radius);
@@ -262,8 +211,6 @@
   gap: var(--home-feature-gap);
 }
 
-<<<<<<< HEAD
-=======
 
 /* -------------------------------- */
 /* UPLOAD BOX */
@@ -294,6 +241,7 @@
   gap: var(--about-feature-gap);
 }
 
+
 /* -------------------------------- */
 /* BACK ARROW ALIGNMENT */
 /* -------------------------------- */
@@ -322,4 +270,3 @@
     padding: 2rem;
   }
 }
->>>>>>> main
