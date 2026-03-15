@@ -144,17 +144,9 @@ Clone the repository:
 git clone <repo-url>
 cd AIvideoGenerator
 ---
-Start Backend
-cd ai-service
-python -m venv .venv
-source .venv/Scripts/activate
-pip install -r requirements.txt
-python -m uvicorn server:app --reload
----
-Start Frontend
-cd frontend
-npm install
-npm run dev
+Start the WebAPP
+* cd AIvideoGenerator
+* npm start dev (Should start both backend and frontend)
 ---
 
 Frontend runs on:
