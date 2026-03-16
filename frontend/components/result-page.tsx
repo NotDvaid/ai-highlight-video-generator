@@ -56,9 +56,13 @@ export function ResultPage({ videoUrl, onBack, onRegenerate }: ResultPageProps) 
           {/* VIDEO PREVIEW */}
           <div className="aspect-video bg-card border border-border rounded-xl overflow-hidden">
             {videoUrl ? (
-              <video controls className="w-full h-full">
-                <source src={videoUrl} type="video/mp4" />
-              </video>
+              <video
+                src={videoUrl || ""}
+                controls
+                autoPlay
+                preload="auto"
+                className="w-full h-full"
+              />
             ) : (
               <div className="flex items-center justify-center h-full text-muted-foreground">
                 No preview available
