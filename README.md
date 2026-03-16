@@ -24,12 +24,27 @@ Frontend:
 - HTML
 - CSS
 
+<<<<<<< HEAD
 Backend:
 - FastAPI
 
 Video Processing
 - FFmpeg
 - MoviePy
+=======
+<<<<<<< HEAD
+Backend / Processing:
+- Node.js
+- FFmpeg
+=======
+Backend:
+- FastAPI
+
+Video Processing
+- FFmpeg
+- MoviePy
+>>>>>>> bb4f42a37edca08f2781aee283a64f9d5aaa3c3f
+>>>>>>> main
 
 Automation / Workflow:
 - n8n
@@ -50,7 +65,15 @@ Optional / Supporting:
 - Automatic generation of 30–60 second highlight video
 - Silent video output (audio not included in MVP)
 - Download/export generated video
+<<<<<<< HEAD
 - Media stored using MinIO object storage
+=======
+<<<<<<< HEAD
+- Storage of input and output media in Amazon S3
+=======
+- Media stored using MinIO object storage
+>>>>>>> bb4f42a37edca08f2781aee283a64f9d5aaa3c3f
+>>>>>>> main
 - Lightweight, simple, and visually clean web UI
 - Basic processing status (processing / completed / failed)
 
@@ -72,6 +95,34 @@ Optional / Supporting:
       |
       | 1) Upload media + prompt
       v
+<<<<<<< HEAD
+[FastAPI Backend Service]
+=======
+<<<<<<< HEAD
+[Node.js API Server]
+>>>>>>> main
+      |
+      | 2) Store uploaded media
+      v
+[MinIO Object Storage]  <--- input files (photos/videos)
+      |
+      | 3) Create processing job
+      v
+[Ai Processing Service]
+      |
+      | 4) - Scene detection
+      |    - Highlight selection
+      |    - Clip extraction
+      v
+[FFmpeg / MoviePy]
+      |
+      | 5) Video assembly
+      v
+<<<<<<< HEAD
+[MinIO Output Storage]  <--- output MP4
+=======
+[Amazon S3]  <--- output MP4
+=======
 [FastAPI Backend Service]
       |
       | 2) Store uploaded media
@@ -91,6 +142,8 @@ Optional / Supporting:
       | 5) Video assembly
       v
 [MinIO Output Storage]  <--- output MP4
+>>>>>>> bb4f42a37edca08f2781aee283a64f9d5aaa3c3f
+>>>>>>> main
       |
       | 6) Provide download link
       v
@@ -99,6 +152,20 @@ Optional / Supporting:
 
 ---
 ## Current Sprint Status
+<<<<<<< HEAD
+Sprint Goal
+=======
+<<<<<<< HEAD
+>>>>>>> main
+
+Implement the core upload → AI processing → video export pipeline.
+---
+
+Completed
+
+<<<<<<< HEAD
+=======
+=======
 Sprint Goal
 
 Implement the core upload → AI processing → video export pipeline.
@@ -106,6 +173,7 @@ Implement the core upload → AI processing → video export pipeline.
 
 Completed
 
+>>>>>>> main
 Next.js frontend interface
 
 File upload UI
@@ -144,17 +212,9 @@ Clone the repository:
 git clone <repo-url>
 cd AIvideoGenerator
 ---
-Start Backend
-cd ai-service
-python -m venv .venv
-source .venv/Scripts/activate
-pip install -r requirements.txt
-python -m uvicorn server:app --reload
----
-Start Frontend
-cd frontend
-npm install
-npm run dev
+Start the WebAPP
+* cd AIvideoGenerator
+* npm start dev (Should start both backend and frontend)
 ---
 
 Frontend runs on:
@@ -165,6 +225,10 @@ Backend runs on:
 
 http://127.0.0.1:8000
 ---
+<<<<<<< HEAD
+=======
+>>>>>>> bb4f42a37edca08f2781aee283a64f9d5aaa3c3f
+>>>>>>> main
 # Team Name 
 
 Hydro 

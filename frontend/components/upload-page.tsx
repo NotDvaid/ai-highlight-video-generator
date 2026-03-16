@@ -5,10 +5,6 @@ import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-
-
-import Link from "next/link";
 import { ArrowLeft, Upload, X, FileImage, FileVideo, Sparkles } from "lucide-react";
 
 
@@ -18,6 +14,7 @@ interface UploadPageProps {
 }
 
 export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
+
   const [files, setFiles] = useState<File[]>([]);
   const [description, setDescription] = useState("");
   const [isDragging, setIsDragging] = useState(false);
@@ -61,7 +58,6 @@ export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
     if (file.type.startsWith("video/")) {
       return <FileVideo className="w-5 h-5 text-accent" />;
     }
-
     return <FileImage className="w-5 h-5 text-accent" />;
   };
 
@@ -88,12 +84,18 @@ export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
         </div>
       </header>
 
-      {/* BACKGROUND WRAPPER */}
+      {/* BACKGROUND */}
       <div className="page-background flex-1">
 
         <main className="container mx-auto px-4 py-8 max-w-2xl">
 
-          <Button variant="ghost" size="icon" onClick={onBack}>
+          {/* BACK BUTTON */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="cursor-pointer mb-4"
+            onClick={onBack}
+          >
             <ArrowLeft className="w-8 h-8" />
           </Button>
 
@@ -116,9 +118,9 @@ export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               className={`
-                border-2 border-dashed rounded-xl p-12 text-center transition-colors cursor-pointer
-                bg-card shadow-sm
-                ${isDragging ? "border-accent bg-accent/10" : "border-border hover:border-muted-foreground"}
+                border-2 border-dashed rounded-xl p-12 text-center transition-all cursor-pointer
+                bg-card shadow-sm hover:shadow-md hover:scale-[1.01]
+                ${isDragging ? "border-accent bg-accent/10" : "border-border hover:border-accent"}
               `}
               onClick={() => document.getElementById("file-input")?.click()}
             >
@@ -183,7 +185,7 @@ export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 cursor-pointer"
                         onClick={() => removeFile(index)}
                       >
                         <X className="w-4 h-4" />
@@ -193,11 +195,21 @@ export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
                   ))}
 
                 </div>
+
+                {/* RESET FILES */}
+                <Button
+                  variant="outline"
+                  className="w-full cursor-pointer"
+                  onClick={() => setFiles([])}
+                >
+                  Upload Different Files
+                </Button>
+
               </div>
             )}
 
-            {/* DESCRIPTION */}
-            <div className="space-y-3">
+            {/* DESCRIPTION CARD */}
+            <div className="space-y-3 bg-card border border-border rounded-xl p-4 shadow-sm">
 
               <label className="text-sm font-medium text-foreground">
                 Describe your event (optional)
@@ -207,7 +219,7 @@ export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
                 placeholder="e.g., Annual charity fundraiser, community picnic..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="min-h-24 bg-input border-border"
+                className="min-h-24 bg-card border border-border rounded-lg p-3 text-foreground placeholder:text-muted-foreground"
               />
 
             </div>
@@ -215,10 +227,11 @@ export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
             {/* GENERATE BUTTON */}
             <Button
               size="lg"
-              className="w-full text-lg py-6"
+              className="w-full text-lg py-6 cursor-pointer transition-all hover:scale-[1.02] hover:bg-accent hover:text-accent-foreground"
               disabled={files.length === 0}
               onClick={() => onGenerate(files, description)}
             >
+              <Sparkles className="w-5 h-5 mr-2" />
               Generate Highlight Video
             </Button>
 
