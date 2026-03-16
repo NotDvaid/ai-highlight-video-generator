@@ -52,13 +52,12 @@ __pycache__/
 
 # Python virtual environments
 venv/
-ai-service/venv/
+ai_service/venv/
 
 # AI service generated files
-ai-service/uploads/
-ai-service/outputs/
-ai-service/frames/
-ai-service/*.pkl
+ai_service/uploads/
+ai_service/outputs/
+ai_service/frames/
 
 # Local uploads / generated videos
 uploads/
@@ -67,7 +66,6 @@ outputs/
 # MinIO storage
 storage/minio-data/*
 !storage/minio-data/.gitkeep
-storage/*.exe
 
 # OS files
 .DS_Store
