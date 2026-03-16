@@ -32,6 +32,33 @@ def ensure_bucket_public():
     client.set_bucket_policy(BUCKET_NAME, json.dumps(policy))
 
 
+def list_videos():
+    try:
+        objects = client.list_objects(BUCKET_NAME, recursive=True)
+
+        videos = []
+        for obj in objects:
+            videos.append({
+                "name": obj.object_name,
+                "url": f"http://{MINIO_ENDPOINT}/{BUCKET_NAME}/{obj.object_name}"
+            })
+
+        return videos
+
+    except S3Error as err:
+        print("MinIO error:", err)
+        return []
+    
+def delete_video(object_name):
+
+    try:
+        client.remove_object(BUCKET_NAME, object_name)
+        return {"message": "Video deleted"}
+
+    except S3Error as err:
+        print("MinIO delete error:", err)
+        return {"error": "Delete failed"}
+    
 def upload_file(file_path, object_name):
 
     try:
@@ -44,7 +71,8 @@ def upload_file(file_path, object_name):
         client.fput_object(
             BUCKET_NAME,
             object_name,
-            file_path
+            file_path,
+            content_type="video/mp4"
         )
 
         return f"http://{MINIO_ENDPOINT}/{BUCKET_NAME}/{object_name}"

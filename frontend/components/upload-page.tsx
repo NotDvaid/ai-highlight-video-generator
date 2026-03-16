@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, Upload, X, FileImage, FileVideo, Sparkles } from "lucide-react";
 
+
 interface UploadPageProps {
   onBack: () => void;
   onGenerate: (files: File[], description: string) => void;

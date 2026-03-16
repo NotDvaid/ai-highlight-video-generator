@@ -62,7 +62,8 @@ ai_service/frames/
 # Local uploads / generated videos
 uploads/
 outputs/
-
+# MinIO Binary
+storage/minio.exe
 # MinIO storage
 storage/minio-data/
 !storage/minio-data/.gitkeep
@@ -80,3 +81,4 @@ Thumbs.db
 # OS files
 .DS_Store
 Thumbs.db
+ 
