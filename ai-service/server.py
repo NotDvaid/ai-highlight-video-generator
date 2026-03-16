@@ -52,9 +52,10 @@ async def create_highlight(
 
     scored_segments = []
     image_clips = []
-    temp_dirs = []
 
-    for file in files:
+    total_files = len(files)
+
+    for file_idx, file in enumerate(files):
 
         unique_name = str(uuid.uuid4()) + "_" + file.filename
         input_path = os.path.join(UPLOAD_FOLDER, unique_name)
@@ -76,17 +77,39 @@ async def create_highlight(
             duration = int(metadata.get("duration", 0))
             segment_length = 3
 
-            for t in range(0, duration, segment_length):
+            # STEP 1: Score all segments (fast — no ffmpeg trimming yet)
+            segment_scores = []
+            segments = list(range(0, duration, segment_length))
+            total_segments = len(segments)
+
+            for seg_idx, t in enumerate(segments):
                 start = t
                 end = min(t + segment_length, duration)
-
-                seg_path = os.path.join(OUTPUT_FOLDER, f"seg_{uuid.uuid4()}.mp4")
-                FFmpegEditor.trim_clip(input_path, seg_path, start, end)
 
                 features = extract_features_from_clip(input_path, start, end)
                 score = model.predict_proba([features])[0][1]
 
+                segment_scores.append((score, input_path, start, end))
+
+                # Update progress: scoring is 0-50%
+                file_progress = (seg_idx + 1) / total_segments
+                overall = ((file_idx + file_progress) / total_files) * 50
+                progress_status["progress"] = int(overall)
+
+            # STEP 2: Sort by score, keep top segments (enough for ~60s)
+            segment_scores.sort(reverse=True, key=lambda x: x[0])
+            max_segments = 60 // segment_length
+            top_segments = segment_scores[:max_segments]
+
+            # STEP 3: Only trim the top segments
+            for trim_idx, (score, src_path, start, end) in enumerate(top_segments):
+                seg_path = os.path.join(OUTPUT_FOLDER, f"seg_{uuid.uuid4()}.mp4")
+                FFmpegEditor.trim_clip(src_path, seg_path, start, end)
                 scored_segments.append((score, seg_path))
+
+                # Update progress: trimming is 50-70%
+                trim_progress = (trim_idx + 1) / len(top_segments)
+                progress_status["progress"] = 50 + int(trim_progress * 20)
 
     scored_segments.sort(reverse=True, key=lambda x: x[0])
     selected_paths = [seg for _, seg in scored_segments] + image_clips
@@ -94,16 +117,25 @@ async def create_highlight(
     if not selected_paths:
         return {"error": "No valid media"}
 
+    progress_status["progress"] = 70
+
     # Normalize all clips to consistent resolution/FPS
     normalized_paths = []
-    for clip_path in selected_paths:
+    for norm_idx, clip_path in enumerate(selected_paths):
         norm_path = clip_path.replace(".mp4", "_norm.mp4")
         FFmpegEditor.normalize_clip(clip_path, norm_path)
         normalized_paths.append(norm_path)
 
-    # Concatenate until we reach 60 seconds
+        # Update progress: normalizing is 70-85%
+        progress_status["progress"] = 70 + int(((norm_idx + 1) / len(selected_paths)) * 15)
+
+    progress_status["progress"] = 85
+
+    # Concatenate
     concat_path = os.path.join(OUTPUT_FOLDER, f"concat_{uuid.uuid4()}.mp4")
     FFmpegEditor.concatenate_clips(normalized_paths, concat_path)
+
+    progress_status["progress"] = 90
 
     total_meta = FFmpegEditor.get_video_metadata(concat_path)
     total_duration = total_meta.get("duration", 0)
@@ -113,18 +145,22 @@ async def create_highlight(
         looped_paths = normalized_paths * loops
         FFmpegEditor.concatenate_clips(looped_paths, concat_path)
 
+    progress_status["progress"] = 93
+
     # Trim to 60 seconds
     output_name = f"highlight_{uuid.uuid4()}.mp4"
     output_path = os.path.join(OUTPUT_FOLDER, output_name)
     FFmpegEditor.trim_clip(concat_path, output_path, 0, 60)
 
+    progress_status["progress"] = 96
+
     # Upload highlight video to MinIO
     video_url = upload_file(output_path, f"videos/{output_name}")
     print("Uploaded highlight video to MinIO:", video_url)
 
+    progress_status["progress"] = 98
+
     # Clean up temporary files
-    for d in temp_dirs:
-        shutil.rmtree(d, ignore_errors=True)
     for seg_path in selected_paths + normalized_paths + [concat_path]:
         try:
             os.remove(seg_path)
