@@ -1,5 +1,6 @@
 "use client";
 
+import VideoGallery from "./video-gallery";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, Download, RefreshCw, Sparkles } from "lucide-react";
@@ -108,7 +109,10 @@ export function ResultPage({ videoUrl, onBack, onRegenerate }: ResultPageProps) 
           <p className="text-center text-sm text-muted-foreground">
             Not happy with the result? Try regenerating for a different edit.
           </p>
-
+          {/* VIDEO GALLERY */}
+          <div className="pt-8 border-t border-border">
+            <VideoGallery />
+          </div>
         </div>
       </main>
     </div>

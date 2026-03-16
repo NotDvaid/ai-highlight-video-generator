@@ -9,7 +9,8 @@ import uuid
 
 from video.ffmpeg_editor import FFmpegEditor
 from ai.feature_extraction import extract_features_from_clip
-from storage.minio_client import upload_file
+from storage.minio_client import upload_file, list_videos, delete_video
+
 
 app = FastAPI()
 
@@ -110,7 +111,9 @@ async def create_highlight(
 
             segment_length = SEGMENT_LENGTH
 
-            segments = list(range(0, duration, segment_length))
+            sampling_rate = 3
+
+            segments = list(range(0, duration, segment_length * sampling_rate))
             total_segments = len(segments)
 
             segment_scores = []
@@ -118,6 +121,7 @@ async def create_highlight(
             # SCORE SEGMENTS
            
             for seg_idx, t in enumerate(segments):
+                print(f"Processing segment {seg_idx+1}/{total_segments}")
 
                 start = t
                 end = min(t + segment_length, duration)
@@ -162,7 +166,7 @@ async def create_highlight(
                     seg_path,
                     start,
                     end,
-                    fast=True
+                    
                 )
 
                 scored_segments.append((score, seg_path))
@@ -366,3 +370,10 @@ async def get_metadata(filepath: str):
     metadata = FFmpegEditor.get_video_metadata(abs_path)
 
     return metadata
+# VIDEO LISTING ENDPOINT
+@app.get("/videos")
+def get_videos():
+    return list_videos()
+@app.delete("/video")
+def delete_video_endpoint(object_name: str):
+    return delete_video(object_name)
