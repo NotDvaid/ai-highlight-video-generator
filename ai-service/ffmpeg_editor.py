@@ -106,7 +106,11 @@ class FFmpegEditor:
             (
                 ffmpeg
                 .input(image_path, loop=1, t=duration)
+
                 .filter("scale", "trunc(iw/2)*2", "trunc(ih/2)*2")  # FIX
+
+                .filter("scale", "trunc(iw/2)2", "trunc(ih/2)2")  # FIX
+
                 .output(output_path, vcodec="libx264", pix_fmt="yuv420p", r=fps)
                 .overwrite_output()
                 .run(capture_stdout=True, capture_stderr=True)

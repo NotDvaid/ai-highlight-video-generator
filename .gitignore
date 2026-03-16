@@ -137,6 +137,11 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> main
 
 # AI service generated/binary files
 ai-service/uploads/
@@ -144,3 +149,25 @@ ai-service/outputs/
 ai-service/frames/
 ai-service/*.pkl
 __pycache__/
+<<<<<<< HEAD
+=======
+
+# Python virtual environments
+venv/
+ai-service/venv/
+
+# MinIO storage data
+storage/minio-data/*
+!storage/minio-data/.gitkeep
+storage/minio.exe
+
+# Local uploads / generated videos
+uploads/
+outputs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+>>>>>>> bb4f42a37edca08f2781aee283a64f9d5aaa3c3f
+>>>>>>> main
