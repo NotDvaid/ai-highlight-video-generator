@@ -64,8 +64,18 @@ uploads/
 outputs/
 
 # MinIO storage
-storage/minio-data/*
+storage/minio-data/
 !storage/minio-data/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Prevent large generated media files
+*.mp4
+*.mov
+*.avi
+*.mkv
 
 # OS files
 .DS_Store
