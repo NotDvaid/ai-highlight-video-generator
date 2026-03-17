@@ -13,41 +13,7 @@ Upload → Analysis → Simple Cut → Export
 
 ## Links
 (To be added later)
-
 ---
-
-## Technologies
-
-Frontend:
-- React / Next.js
-- TypeScript
-- HTML
-- CSS
-
-
-Backend:
-- FastAPI
-
-Video Processing
-- FFmpeg
-
-Backend / Processing:
-- Node.js
-- FFmpeg
-
-Backend:
-- FastAPI
-
-Video Processing
-- FFmpeg
-
-Automation / Workflow:
-- n8n
-
-Storage:
-- MinIO
----
-
 ## Features (MVP)
 
 - Upload up to 10 media files (images and videos)
