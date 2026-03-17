@@ -41,7 +41,6 @@ Upload → Analysis → Simple Cut → Export
 
 ### Video Processing
 - FFmpeg
-- MoviePy
 
 ### AI / Processing
 - Custom ML model (segment scoring)
