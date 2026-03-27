@@ -1,0 +1,84 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage
+*.lcov
+.nyc_output
+
+# Dependency directories
+node_modules/
+jspm_packages/
+web_modules/
+
+# TypeScript
+*.tsbuildinfo
+
+# npm cache
+.npm
+
+# Build output
+.next
+out
+dist
+.cache
+.parcel-cache
+
+# Framework caches
+.svelte-kit/
+**/.vitepress/dist
+**/.vitepress/cache
+.docusaurus
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Python virtual environments
+venv/
+ai_service/venv/
+
+# AI service generated files
+ai_service/uploads/
+ai_service/outputs/
+ai_service/frames/
+
+# Local uploads / generated videos
+uploads/
+outputs/
+# MinIO Binary
+storage/minio.exe
+# MinIO storage
+storage/minio-data/
+!storage/minio-data/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Prevent large generated media files
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# OS files
+.DS_Store
+Thumbs.db
+ 
