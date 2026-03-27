@@ -2,93 +2,101 @@
 
 A full-stack application that generates short-form highlight videos (30–60 seconds) from user-uploaded images and videos.
 
-Overview
+---
 
-This project enables users to upload media and automatically generate highlight videos through a structured processing pipeline. The system focuses on efficiently preparing, selecting, and assembling media into a polished final output.
+##Overview
 
-The architecture is designed to support future integration of AI-based scoring and scene detection.
+This system allows users to upload media and automatically generate highlight videos through a structured processing pipeline.
 
-Core Workflow
+The architecture is designed to support future AI-based scoring and scene detection.
+
+---
+
+##Core Workflow
 
 Upload → Processing → Clip Selection → Video Assembly → Export
 
-Features
--Upload up to 10 images or video files
--Automatic highlight video generation (30–60 seconds)
--Image-to-video clip conversion
--Video normalization and concatenation using FFmpeg
--Downloadable MP4 output
--Object storage using MinIO (S3-compatible)
--Processing progress tracking
--Video gallery (view, download, delete)
--Clean, responsive web interface
- 
-Tech Stack
+---
 
-Frontend
--Next.js (React, TypeScript)
--Tailwind CSS
+##Features
 
-Backend
--FastAPI (Python)
+- Upload up to 10 images or video files  
+- Automatic highlight video generation (30–60 seconds)  
+- Image-to-video clip conversion  
+- Video normalization and concatenation using FFmpeg  
+- Downloadable MP4 output  
+- Object storage using MinIO (S3-compatible)  
+- Processing progress tracking  
+- Video gallery (view, download, delete)  
+- Clean, responsive web interface  
 
-Video Processing
--FFmpeg
+---
 
-Storage
--MinIO (S3-compatible object storage)
+##Tech Stack
 
-Pipeline Design (In Progress)
--Feature extraction
--Segment scoring
--Clip selection
+**Frontend**
+- Next.js (React, TypeScript)
+- Tailwind CSS  
 
-System Architecture
-Frontend (Next.js)
-        ↓
-Backend API (FastAPI)
-        ↓
-Object Storage (MinIO)
-        ↓
-Processing Pipeline
-        ↓
-FFmpeg Video Assembly
-        ↓
-Output Storage + Delivery
+**Backend**
+- FastAPI (Python)  
 
-Current Status
+**Video Processing**
+- FFmpeg  
 
-Completed
--Full-stack application setup
--Media upload and storage pipeline
--Video generation with FFmpeg
--Backend API and frontend integration
--Video preview, download, and management UI
+**Storage**
+- MinIO (S3-compatible object storage)  
 
-In Progress
--Scene detection improvements
--Highlight ranking and scoring logic
--UI progress tracking enhancements
+---
 
-Planned
--Background job queue for processing
--AI-based highlight scoring
--User authentication
--Metadata storage
+##System Architecture
 
-Scope (MVP)
--No audio processing or music syncing
--No subtitles or overlays
--No advanced AI scene understanding (planned for future iterations)
+Frontend (Next.js)  
+↓  
+Backend API (FastAPI)  
+↓  
+Object Storage (MinIO)  
+↓  
+Processing Pipeline  
+↓  
+FFmpeg Video Assembly  
+↓  
+Output Storage + Delivery  
 
-Local Development
-git clone <repo-url>
+---
+
+##Status
+
+**Completed**
+- Full-stack application setup  
+- Media upload and storage pipeline  
+- Video generation with FFmpeg  
+- Backend and frontend integration  
+- Video preview and management UI  
+
+**In Progress**
+- Scene detection improvements  
+- Highlight ranking logic  
+- UI progress enhancements  
+
+**Planned**
+- AI-based scoring system  
+- Background job queue  
+- User authentication  
+- Metadata storage  
+
+---
+
+##Setup
+
+👉 See full setup instructions here: [SETUP.md](./SETUP.md)
+
+---
+
+##Quick Start
+
+```bash
+git clone https://github.com/NotDvaid/ai-highlight-video-generator.git
 cd ai-highlight-video-generator
+npm install
 npm run dev
-
-Local Services
-
-Frontend: http://localhost:3000
-Backend API: http://127.0.0.1:8000
-API Docs: http://127.0.0.1:8000/docs
-MinIO Console: http://127.0.0.1:9001
