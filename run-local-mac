@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+# run-local-mac — macOS launcher for AI Video Generator (local Kubernetes)
+# Usage: double-click in Finder, or run ./run-local-mac from Terminal
+# Mirrors the behaviour of run-local.bat + scripts/run-local.ps1 on Windows.
+
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# If launched by double-clicking in Finder (no attached terminal), reopen
+# this script inside a new Terminal.app window so the user sees the output.
+# ---------------------------------------------------------------------------
+if [ ! -t 1 ]; then
+  SCRIPT_PATH="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+  osascript -e "tell application \"Terminal\" to do script \"$SCRIPT_PATH\""
+  exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# Change to the directory that contains this script so relative paths work.
+# ---------------------------------------------------------------------------
+cd "$(dirname "$0")"
+
+# ---------------------------------------------------------------------------
+# Helper: require a command to be on PATH
+# ---------------------------------------------------------------------------
+require_command() {
+  local cmd="$1"
+  if ! command -v "$cmd" &>/dev/null; then
+    echo "ERROR: Required command '$cmd' not found. Install it and try again."
+    exit 1
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# Helper: wait until a URL returns HTTP 2xx/3xx/4xx (i.e. the server is up)
+# ---------------------------------------------------------------------------
+wait_http_ok() {
+  local url="$1"
+  local timeout="${2:-60}"
+  local deadline=$(( $(date +%s) + timeout ))
+  while [ "$(date +%s)" -lt "$deadline" ]; do
+    local code
+    code=$(curl -o /dev/null -s -w "%{http_code}" --max-time 3 "$url" 2>/dev/null || true)
+    if [ -n "$code" ] && [ "$code" -ge 200 ] && [ "$code" -lt 500 ]; then
+      return 0
+    fi
+    sleep 0.5
+  done
+  echo "ERROR: Timed out waiting for $url"
+  exit 1
+}
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+echo "== AI Video Generator: local Kubernetes launcher =="
+echo "Type 'quit' to stop port-forwards and exit. Press Ctrl+C anytime."
+
+require_command docker
+require_command kubectl
+
+# Fail fast if the cluster is unreachable
+kubectl cluster-info >/dev/null
+kubectl get nodes >/dev/null
+
+NS="ai-video"
+
+MANIFESTS=(
+  "k8s/namespace.yaml"
+  "k8s/pvc.yaml"
+  "k8s/secret.yaml"
+  "k8s/configmap.yaml"
+  "k8s/minio-deployment.yaml"
+  "k8s/backend-deployment.yaml"
+  "k8s/frontend-deployment.yaml"
+)
+
+echo ""
+echo "Applying manifests..."
+for m in "${MANIFESTS[@]}"; do
+  echo "  kubectl apply -f $m"
+  kubectl apply -f "$m"
+done
+
+echo ""
+echo "Waiting for deployments..."
+DEPLOYMENTS=("minio" "backend" "frontend")
+for d in "${DEPLOYMENTS[@]}"; do
+  echo "  waiting for deployment/$d..."
+  kubectl wait --for=condition=available --timeout=180s "deployment/$d" -n "$NS"
+done
+
+# ---------------------------------------------------------------------------
+# Start port-forwards in the background; collect PIDs for cleanup
+# ---------------------------------------------------------------------------
+echo ""
+echo "Starting port-forwards (Ctrl+C or type 'quit' to stop)..."
+
+PF_PIDS=()
+
+kubectl port-forward -n "$NS" svc/frontend 3000:3000 --address 127.0.0.1 &>/dev/null &
+PF_PIDS+=($!)
+sleep 1
+if ! kill -0 "${PF_PIDS[-1]}" 2>/dev/null; then
+  echo "ERROR: port-forward for frontend failed to start (port 3000 may already be in use)"
+  exit 1
+fi
+echo "  started frontend :3000 (kubectl PID ${PF_PIDS[-1]})"
+
+kubectl port-forward -n "$NS" svc/backend  8000:8000 --address 127.0.0.1 &>/dev/null &
+PF_PIDS+=($!)
+sleep 1
+if ! kill -0 "${PF_PIDS[-1]}" 2>/dev/null; then
+  echo "ERROR: port-forward for backend failed to start (port 8000 may already be in use)"
+  exit 1
+fi
+echo "  started backend  :8000 (kubectl PID ${PF_PIDS[-1]})"
+
+kubectl port-forward -n "$NS" svc/minio    9000:9000 --address 127.0.0.1 &>/dev/null &
+PF_PIDS+=($!)
+sleep 1
+if ! kill -0 "${PF_PIDS[-1]}" 2>/dev/null; then
+  echo "ERROR: port-forward for minio failed to start (port 9000 may already be in use)"
+  exit 1
+fi
+echo "  started minio    :9000 (kubectl PID ${PF_PIDS[-1]})"
+
+# ---------------------------------------------------------------------------
+# Cleanup function — always runs on exit/Ctrl+C
+# ---------------------------------------------------------------------------
+cleanup() {
+  echo ""
+  echo "Stopping port-forwards..."
+  for pid in "${PF_PIDS[@]}"; do
+    if kill -0 "$pid" 2>/dev/null; then
+      kill "$pid" 2>/dev/null && echo "  stopped kubectl PID $pid"
+    fi
+  done
+  echo "Stopped."
+}
+trap cleanup EXIT
+
+# ---------------------------------------------------------------------------
+# Health checks
+# ---------------------------------------------------------------------------
+echo ""
+echo "Waiting for forwarded services..."
+wait_http_ok "http://127.0.0.1:8000/health" 60
+wait_http_ok "http://127.0.0.1:3000" 60
+echo "  OK: backend + frontend responding"
+
+# Open the frontend in the default browser
+open "http://127.0.0.1:3000"
+
+# ---------------------------------------------------------------------------
+# Interactive prompt — keep port-forwards alive until user types 'quit'
+# ---------------------------------------------------------------------------
+while true; do
+  if ! read -r -p "launcher> " input_line; then
+    # EOF (Ctrl+D) — treat as quit
+    echo ""
+    break
+  fi
+  case "$input_line" in
+    quit|exit)
+      break
+      ;;
+    *)
+      echo "Unknown command: '$input_line' (type 'quit' to stop)"
+      ;;
+  esac
+done

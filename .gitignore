@@ -1,0 +1,21 @@
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment
+.env
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Storage
+storage/minio.exe
+storage/minio-data/

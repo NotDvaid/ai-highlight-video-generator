@@ -1,0 +1,132 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ROOT THEME VARIABLES */
+
+:root {
+  --background: #F1EFE8;
+  --foreground: #3B6D11;
+
+  --card: #F8FAF3;
+  --card-foreground: #3B6D11;
+
+  --popover: #F8FAF3;
+  --popover-foreground: #3B6D11;
+
+  --primary: #639922;
+  --primary-foreground: #ffffff;
+
+  --secondary: #C0DD97;
+  --secondary-foreground: #3B6D11;
+
+  --muted: #F1EFE8;
+  --muted-foreground: #6b7280;
+
+  
+  --accent: #639922;
+  --accent-foreground: #ffffff;
+
+  --border: #C0DD97;
+  --input: #C0DD97;
+
+  --ring: #639922;
+
+  --radius: 0.75rem;
+}
+
+/* DARK MODE */
+
+.dark {
+  
+  --background: #000000;
+
+  --foreground: #C0DD97;
+
+  --card: #262323;
+  --card-foreground: #F1EFE8;
+
+  --popover: #3B6D11;
+  --popover-foreground: rgb(241, 232, 232);
+
+  /* brand green used ONLY here */
+  --primary: #3B6D11;
+  --primary-foreground: #C0DD97;
+
+  --secondary: #C0DD97;
+  --secondary-foreground: #F1EFE8;
+
+  --muted: #3B6D11;
+  --muted-foreground: #3B6D11;
+
+  /* orange pop */
+  --accent: #3B6D11;
+  --accent-foreground: #000000;
+
+  --border: #97C459;
+  --input: #3B6D11;
+
+  --ring: #EF9F27;
+}
+
+/* TAILWIND THEME MAPPING */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+
+  --color-ring: var(--ring);
+
+  --radius-lg: var(--radius);
+}
+
+/* BASE */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* CARDS */
+
+.home-feature-card {
+  border-radius: var(--home-card-radius);
+  min-height: 9.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+
+  transition: all 0.2s ease;
+}
+
+.home-feature-card:hover {
+  outline: none;
+}
