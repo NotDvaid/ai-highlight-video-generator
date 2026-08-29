@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "concurrently \"npm run frontend\" \"npm run backend\" \"npm run minio\"",
     "frontend": "cd frontend && npm run dev",
-    "backend": "python -m uvicorn ai_service.server:app --reload",
+    "backend": "python -m uvicorn service.server:app --reload",
     "minio": "cd storage && .\\minio.exe server .\\minio-data --console-address :9001",
     "remotion": "remotion studio src/index.jsx",
     "render": "remotion render src/index.jsx MyVideo out.mp4"

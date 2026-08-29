@@ -1,10 +1,23 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+
 from typing import List
-import shutil, os, uuid, subprocess
+import os
+import shutil
+import uuid
+import subprocess
+
 from dotenv import load_dotenv
-from ai_service.storage.minio_client import upload_file
+
+
+
+from service.models.asset import Asset
+from service.ai.prompt_engine import accept_request
+from service.ai.planner import Planner
+from service.renderer.composer import Composer
+from service.renderer.ffmpeg_render import FFmpegRenderer
+from service.storage.minio_client import upload_file
 
 load_dotenv()
 
@@ -55,7 +68,6 @@ def apply_prompt_edit(input_path, output_path, prompt):
 
     subprocess.run(cmd, check=True)
 
-# ---------------- ROUTE ----------------
 @app.post("/create-highlight")
 def create_highlight(
     files: List[UploadFile] = File(...),
@@ -65,99 +77,61 @@ def create_highlight(
     if len(files) > MAX_FILES:
         return {"error": f"Max {MAX_FILES} files allowed"}
 
-    processed_files = []
+    assets = []
 
-    # -------- STEP 1: NORMALIZE (FIX AUDIO HERE) --------
     for file in files:
-        raw_path = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}_raw.mp4")
-        clean_path = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}_clean.mp4")
 
-        with open(raw_path, "wb") as f:
+        asset_id = uuid.uuid4()
+
+        extension = os.path.splitext(file.filename)[1]
+        file_path = os.path.join(
+            UPLOAD_FOLDER,
+            f"{asset_id}{extension}"
+        )
+
+        with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
 
-        try:
-            subprocess.run([
-                "ffmpeg",
-                "-y",
-                "-fflags", "+genpts",
-                "-i", raw_path,
+        media_type = (
+            "video"
+            if file.content_type and file.content_type.startswith("video/")
+            else "image"
+        )
 
-                # video normalize
-                "-vf", "scale=720:1280,setsar=1",
-                "-r", "30",
+        asset = Asset(
+            asset_id=asset_id,
+            path=file_path,
+            media_type=media_type,
+            duration=5.0,
+            width=1920,
+            height=1080,
+            has_audio=media_type == "video",
+            fps=30.0 if media_type == "video" else 0.0,
+        )
 
-                # KEY FIXES
-                "-map", "0:v:0",
-                "-map", "0:a?",             # allow missing audio
-                "-c:v", "libx264",
-                "-preset", "fast",
-                "-crf", "23",
+        assets.append(asset)
 
-                "-c:a", "aac",
-                "-b:a", "128k",
-                "-ar", "48000",
+    planner = Planner()
+    composer = Composer()
+    renderer = FFmpegRenderer()
 
-                "-af", "aresample=async=1",  # fix audio sync
+    ai_plan = accept_request(prompt, assets)
 
-                "-movflags", "+faststart",
+    timeline = planner.create_timeline(
+        assets,
+        ai_plan
+    )
 
-                clean_path
-            ], check=True)
+    render_plan = composer.compose(timeline)
 
-            processed_files.append(clean_path)
+    output_path = renderer.render(render_plan)
 
-        except subprocess.CalledProcessError:
-            print(f"Failed processing: {file.filename}")
-            continue
+    video_name = os.path.basename(output_path)
 
-        finally:
-            os.remove(raw_path)
-
-    if not processed_files:
-        return {"error": "No valid videos processed"}
-
-    # -------- STEP 2: CONCAT (FIX AUDIO TIMING) --------
-    concat_file = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}_concat.txt")
-
-    with open(concat_file, "w") as f:
-        for path in processed_files:
-            f.write(f"file '{path}'\n")
-
-    final_output = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}_final.mp4")
-
-    subprocess.run([
-        "ffmpeg",
-        "-y",
-        "-f", "concat",
-        "-safe", "0",
-        "-fflags", "+genpts",
-        "-i", concat_file,
-
-        "-vsync", "vfr",
-
-        "-c:v", "libx264",
-        "-c:a", "aac",
-
-        "-movflags", "+faststart",
-
-        final_output
-    ], check=True)
-
-    # -------- STEP 3: EDIT --------
-    edited_output = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}_edited.mp4")
-    apply_prompt_edit(final_output, edited_output, prompt)
-
-    # -------- STEP 4: UPLOAD --------
-    video_name = os.path.basename(edited_output)
-    video_url = upload_file(edited_output, video_name)
-
-    # -------- CLEANUP --------
-    for fpath in processed_files:
-        os.remove(fpath)
-
-    os.remove(concat_file)
-    os.remove(final_output)
-    os.remove(edited_output)
+    video_url = upload_file(
+        output_path,
+        video_name
+    )
 
     return {
         "video_url": video_url

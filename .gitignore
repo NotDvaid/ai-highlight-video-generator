@@ -19,3 +19,5 @@ venv/
 # Storage
 storage/minio.exe
 storage/minio-data/
+service/storage/*.mp4
+service/uploads/

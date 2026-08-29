@@ -401,7 +401,7 @@ export function UploadPage({ onBack, onGenerate }: UploadPageProps) {
 
                   {captions.map((caption, i) => (
                     <div key={i} className="flex gap-2 items-center">
-                      <input
+                      <input 
                         type="text"
                         placeholder="Caption text..."
                         value={caption.text}

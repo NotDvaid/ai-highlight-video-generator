@@ -24,7 +24,7 @@
   --muted: #F1EFE8;
   --muted-foreground: #6b7280;
 
-  
+  /* 🔥 Accent should be ORANGE (not green) */
   --accent: #639922;
   --accent-foreground: #ffffff;
 
@@ -61,13 +61,13 @@
   --muted-foreground: #3B6D11;
 
   /* orange pop */
-  --accent: #3B6D11;
+  --accent: #97C459;
   --accent-foreground: #000000;
 
   --border: #97C459;
   --input: #3B6D11;
 
-  --ring: #EF9F27;
+  --ring: #992222;
 }
 
 /* TAILWIND THEME MAPPING */

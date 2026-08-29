@@ -8,67 +8,47 @@ type Video = {
   url: string;
 };
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function VideoGallery() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
-  const [enabled, setEnabled] = useState(false);
 
-  // 🗑 DELETE VIDEO
   const deleteVideo = async (name: string) => {
     const confirmDelete = confirm("Delete this video?");
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(
-        `${API_URL}/video?object_name=${name}`,
-        { method: "DELETE" }
-      );
+      const res = await fetch(`${API_URL}/video?object_name=${name}`, {
+        method: "DELETE",
+      });
 
-      if (!res.ok) throw new Error("Delete failed");
+      if (!res.ok) {
+        throw new Error("Delete failed");
+      }
 
-      const updated = videos.filter((v) => v.name !== name);
-      setVideos(updated);
-
-      localStorage.setItem("video_history", JSON.stringify(updated));
+      setVideos((prev) => prev.filter((v) => v.name !== name));
     } catch (err) {
       console.error("Delete error:", err);
-      alert("Delete not available yet");
+      alert("Failed to delete video");
     }
   };
 
-  // 📦 LOAD FROM LOCAL STORAGE
   useEffect(() => {
-    try {
-      const local = localStorage.getItem("video_history");
+    const fetchVideos = async () => {
+      try {
+        const res = await fetch(`${API_URL}/videos`);
+        if (!res.ok) throw new Error("Failed to fetch videos");
 
-      if (local) {
-        const parsed = JSON.parse(local);
-
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setVideos(parsed);
-          setEnabled(true);
-          return;
-        }
+        const data = await res.json();
+        setVideos(data);
+      } catch (err) {
+        console.error("Fetch error:", err);
       }
+    };
 
-      setEnabled(false);
-    } catch (err) {
-      console.warn("Gallery error:", err);
-      setEnabled(false);
-    }
+    fetchVideos();
   }, []);
-
-  // 🚫 NOTHING TO SHOW
-  if (!enabled) {
-    return (
-      <div className="text-center text-muted-foreground py-12">
-        No videos yet
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-10">
@@ -89,9 +69,12 @@ export default function VideoGallery() {
             <div
               key={video.name}
               onClick={() => setSelectedVideo(video)}
-              className="group rounded-2xl overflow-hidden bg-card border border-border
-              shadow-sm hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.03]
-              transition-all duration-300 cursor-pointer"
+              className="
+                group rounded-2xl overflow-hidden bg-card border border-border
+                shadow-sm hover:shadow-2xl
+                hover:-translate-y-1 hover:scale-[1.03]
+                transition-all duration-300 cursor-pointer
+              "
             >
               {/* VIDEO */}
               <div
@@ -126,7 +109,7 @@ export default function VideoGallery() {
                   </div>
                 </div>
 
-                {/* OVERLAY */}
+                {/* DARK OVERLAY */}
                 <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition pointer-events-none" />
               </div>
 
@@ -143,10 +126,15 @@ export default function VideoGallery() {
                       href={video.url}
                       download
                       onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium
-                      text-yellow-600 bg-yellow-500/10
-                      hover:bg-yellow-500/20 hover:text-yellow-700
-                      transition-all duration-200"
+                      className="
+                        flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium
+                        text-yellow-600 bg-yellow-500/10
+                        hover:bg-yellow-500/20 hover:text-yellow-700
+                        dark:text-yellow-400 dark:bg-yellow-400/10 dark:hover:bg-yellow-400/20
+                        shadow-sm hover:shadow-md
+                        transition-all duration-200 cursor-pointer
+                        hover:scale-105 active:scale-95
+                      "
                     >
                       <Download className="w-4 h-4" />
                       Download
@@ -158,10 +146,15 @@ export default function VideoGallery() {
                         e.stopPropagation();
                         deleteVideo(video.name);
                       }}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium
-                      text-red-600 bg-red-500/10
-                      hover:bg-red-500/20 hover:text-red-700
-                      transition-all duration-200"
+                      className="
+                        flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-medium
+                        text-red-600 bg-red-500/10
+                        hover:bg-red-500/20 hover:text-red-700
+                        dark:text-red-400 dark:bg-red-400/10 dark:hover:bg-red-400/20
+                        shadow-sm hover:shadow-md
+                        transition-all duration-200 cursor-pointer
+                        hover:scale-105 active:scale-95
+                      "
                     >
                       <Trash2 className="w-4 h-4" />
                       Delete
@@ -174,11 +167,11 @@ export default function VideoGallery() {
         </div>
       ) : (
         <div className="text-center text-muted-foreground py-12">
-          No videos yet
+          No videos yet — go make something 🎬
         </div>
       )}
 
-      {/* 🎬 MODAL */}
+      {/* MODAL PLAYER */}
       {selectedVideo && (
         <div
           className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
@@ -192,12 +185,13 @@ export default function VideoGallery() {
               src={selectedVideo.url}
               controls
               autoPlay
-              className="w-full rounded-xl"
+              className="w-full rounded-xl shadow-2xl"
             />
 
+            {/* CLOSE BUTTON */}
             <button
               onClick={() => setSelectedVideo(null)}
-              className="absolute top-2 right-2 bg-black/60 text-white px-3 py-1 rounded-lg"
+              className="absolute top-2 right-2 bg-black/60 text-white px-3 py-1 rounded-lg hover:bg-black transition"
             >
               ✕
             </button>

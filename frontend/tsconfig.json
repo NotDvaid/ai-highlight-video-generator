@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-, "remotion/src/Root.tsx"  ],
+  ],
   "exclude": [
     "node_modules"
   ]

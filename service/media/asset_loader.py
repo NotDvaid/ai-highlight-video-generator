@@ -39,9 +39,16 @@ class AssetLoader:
         for stream in data["streams"]:
         # 4C. Extract metadata from the video stream.
         # 4D. Mark the asset as containing audio if an audio stream exists.
-            if stream['codec_type'] == 'audio':
+            if path.suffix in {".jpg", ".png", ".jpeg", ".webp", ".bmp"}:
+                asset_type = "image"
+                asset_duration = 5.0
+                asset_width = stream['width']
+                asset_height = stream['height']
+                asset_fps = 0.0
+                asset_audio = False
+            elif stream['codec_type'] == 'audio':
                 asset_audio = True 
-            if stream['codec_type'] == 'video':
+            elif stream['codec_type'] == 'video':
                 asset_type = stream['codec_type']
                 asset_duration = stream['duration']
                 asset_width = stream['width']

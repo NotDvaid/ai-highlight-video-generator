@@ -6,50 +6,75 @@ import { UploadPage } from "@/components/upload-page";
 import { ProcessingPage } from "@/components/processing-page";
 import ResultPage from "@/components/result-page";
 
-type AppState = "landing" | "upload" | "processing" | "preview";
+type AppState = "landing" | "upload" | "processing" | "result";
+type CaptionEntry = { text: string; start_time: number; end_time: number };
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API_URL = "http://localhost:8000";
 
 export default function Home() {
   const [state, setState] = useState<AppState>("landing");
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [resultVideo, setResultVideo] = useState<string | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
 
-  const handleGenerate = async (files: File[], prompt: string) => {
-  setState("processing");
+  const handleGetStarted = () => setState("upload");
 
-  try {
-    const formData = new FormData();
+  const handleGenerate = async (
+    files: File[],
+    description: string,
+    musicFile: File | null,
+    captions: CaptionEntry[]
+  ) => {
+    // Reset state and navigate to processing page immediately for visual feedback
+    setResultVideo(null);
+    setJobId(null);
+    setState("processing");
 
-    files.forEach((file) => {
-      formData.append("files", file);
-    });
+    try {
+      const formData = new FormData();
 
-    formData.append("prompt", prompt);
+      files.forEach((file) => {
+        formData.append("files", file);
+      });
 
-    const res = await fetch(`${API_URL}/create-highlight`, {
-      method: "POST",
-      body: formData,
-    });
+      formData.append("prompt", description);
 
-    const data = await res.json();
+      if (musicFile) {
+        formData.append("music_file", musicFile);
+      }
 
-    setVideoUrl(data.video_url);
+      if (captions.length > 0) {
+        formData.append("captions_json", JSON.stringify(captions));
+      }
 
-    // ONLY switch AFTER backend finishes
-    setState("preview");
+      const res = await fetch(`${API_URL}/create-highlight`, {
+        method: "POST",
+        body: formData,
+      });
 
-  } catch (err) {
-    console.error(err);
-    alert("Failed to generate video");
-    setState("upload");
-  }
-};
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ detail: "Upload failed" }));
+        throw new Error(error.detail || "Upload failed");
+      }
+
+      const data = await res.json();
+
+      if (!data.video_url) {
+        throw new Error("No video URL returned from server");
+      }
+
+      setResultVideo(data.video_url);
+      setJobId(data.job_id);
+    } catch (err) {
+      console.error(err);
+      alert(err instanceof Error ? err.message : "Failed to generate video");
+      setState("upload");
+    }
+  };
 
   return (
     <>
       {state === "landing" && (
-        <LandingPage onGetStarted={() => setState("upload")} />
+        <LandingPage onGetStarted={handleGetStarted} />
       )}
 
       {state === "upload" && (
@@ -59,13 +84,19 @@ export default function Home() {
         />
       )}
 
-      {state === "processing" && <ProcessingPage />}
+      {state === "processing" && (
+        <ProcessingPage
+          jobId={jobId}
+          videoReady={!!resultVideo}
+          onDone={() => setState("result")}
+        />
+      )}
 
-      {state === "preview" && (
+      {state === "result" && (
         <ResultPage
-          videoUrl={videoUrl}
-          onRegenerate={() => setState("upload")}
-          onStartOver={() => setState("landing")}
+          videoUrl={resultVideo}
+          onRegenerate={() => setState("processing")}
+          onStartOver={() => setState("upload")}
         />
       )}
     </>
