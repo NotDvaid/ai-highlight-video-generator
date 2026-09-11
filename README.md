@@ -10,7 +10,7 @@ The goal of Impact Reels is to reduce the amount of time and technical knowledge
 
 # Repo Location
 
-[GitHub Repository](YOUR_GITHUB_REPO_URL)
+[GitHub Repository](https://github.com/NotDvaid/ai-highlight-video-generator)
 
 ---
 
