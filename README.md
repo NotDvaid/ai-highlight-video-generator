@@ -16,13 +16,14 @@ The goal of Impact Reels is to reduce the amount of time and technical knowledge
 
 # Project Prototype
 
-[Figma Prototype](YOUR_FIGMA_URL)
+[Impact Reels Prototype – Figma Make](https://www.figma.com/make/12jft4dtpVvYSzr8jGsIlZ/Impact-Reels-Prototype?p=f\&t=mStuy9ffjMaspX3M-0)
 
 ---
 
 # Progress Tracking Tool
 
-[Jira Board]([https://airozdigital.atlassian.net/jira/software/projects/SOF/boards/100/backlog])
+[SoftwareDevProject - Backlog - Jira](https://airozdigital.atlassian.net/jira/software/projects/SOF/boards/100/backlog)
+
 
 
 ---
