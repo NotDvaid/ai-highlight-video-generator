@@ -22,7 +22,8 @@ The goal of Impact Reels is to reduce the amount of time and technical knowledge
 
 # Progress Tracking Tool
 
-[Jira Board]((https://airozdigital.atlassian.net/jira/software/projects/SOF/boards/100/backlog))
+[Jira Board]([YOUR_JIRA_URL](https://airozdigital.atlassian.net/jira/software/projects/SOF/boards/100/backlog))
+
 
 ---
 
