@@ -8,8 +8,8 @@ from uuid import uuid4
 
 
 class AssetLoader:
-    def load(self, upload: AssetUpload) -> Asset:
-        # 1. Convert the uploaded path string into a Path object
+    def load(self, upload: AssetUpload)-> Asset:
+        # 1. Convert the uploaded path stri*ng into a Path object
         path = Path(upload.path)
 
        # 2. Verify the file exists. Stop immediately if it doesn't.

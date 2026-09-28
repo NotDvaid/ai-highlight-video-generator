@@ -2,12 +2,14 @@ print("PROMPT ENGINE STARTED")
 
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 from groq import Groq
 from service.models.asset import Asset
 from pydantic import BaseModel
 import json
 
-load_dotenv()
+BASE_DIR = Path(__file__).resolve().parents[1]
+load_dotenv(BASE_DIR / ".env")
 
 api_key = os.getenv("GROQ_API_KEY")
 

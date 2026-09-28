@@ -26,6 +26,8 @@ MAX_FILES = 10
 
 app = FastAPI()
 
+app.mount("/videos", StaticFiles(directory="service/storage"), name="videos")
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -128,10 +130,7 @@ def create_highlight(
 
     video_name = os.path.basename(output_path)
 
-    video_url = upload_file(
-        output_path,
-        video_name
-    )
+    video_url = f"http://localhost:8000/videos/{video_name}"
 
     return {
         "video_url": video_url

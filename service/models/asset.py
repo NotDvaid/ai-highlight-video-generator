@@ -11,4 +11,3 @@ class Asset(BaseModel):
         has_audio: bool
         fps: float
 
-

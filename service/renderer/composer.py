@@ -20,4 +20,4 @@ class Composer:
 
         build_render_plan =  RenderPlan(timeline= timeline)
 
-        return build_render_plan
+        
