@@ -6,6 +6,7 @@ from pathlib import Path
 from groq import Groq
 from service.models.asset import Asset
 from pydantic import BaseModel
+from service.models.asset_analysis import AssetAnalysis
 import json
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -19,15 +20,23 @@ class AIPlan(BaseModel):
     asset_order: list[str]
 
 
-def accept_request(prompt: str, assets: list[Asset]):
+def accept_request(prompt: str, assets: list[Asset], analysis_results: list[AssetAnalysis]):
     asset_info = []
 
     for asset in assets:
+        description = ""
+        for analysis in analysis_results:
+            if asset.asset_id == analysis.asset_id:
+
+               description = analysis.description
         asset_info.append({
             "asset_id": str(asset.asset_id),
             "media_type": asset.media_type,
-            "duration": asset.duration
-        })
+            "duration": asset.duration,
+            "description": description
+
+            })
+
 
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b",
@@ -71,4 +80,4 @@ def accept_request(prompt: str, assets: list[Asset]):
 
 
 
-    
+

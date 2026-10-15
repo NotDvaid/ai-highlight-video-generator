@@ -7,21 +7,25 @@ class AssetNotFoundError(Exception):
     def __init__(self, path: str):
         self.path = path
         super().__init__("Unable to locate file:" + path)
-        
 
 
 class UnsupportedMediaTypeError(Exception):
     # Raised when the uploaded media type is not supported
-    def __init__(self, path: str):
+    def __init__(self, path: str, message=None):
         self.path = path
-        super().__init__("file not supported :" + path)
-        
+
+        if message is None:
+            message = "file not supported: " + path
+
+        super().__init__(message)
+
 
 class CorruptedMediaError(Exception):
     # Raised when a media file cannot be read correctly
     def __init__(self, path: str):
         self.path = path
         super().__init__("Unable to read file:" + path)
+
 
 class MissingMetadataError(Exception):
     # Raised when a there is a missing value in the metadata
@@ -32,4 +36,3 @@ class MissingMetadataError(Exception):
         super().__init__(message)
 
 
-            

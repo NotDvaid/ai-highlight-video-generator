@@ -24,3 +24,7 @@ service/uploads/
 
 # Enviroment files 
 service/env*
+
+# Next.js
+frontend/.next/
+frontend/node_modules/
