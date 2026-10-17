@@ -3,6 +3,8 @@ uvicorn
 python-multipart
 python-dotenv
 openai
+groq
+google-genai
 ffmpeg-python
 opencv-python-headless
 numpy

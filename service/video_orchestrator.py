@@ -47,7 +47,7 @@ class VideoOrchestrator:
         for asset in assets:
             analysis_results.append(self.media_analyzer.analyze(asset))
 
-        ai_plan = accept_request(prompt=prompt,  assets=assets)
+        ai_plan = accept_request(prompt=prompt,  assets=assets, analysis_results= analysis_results)
         timeline = self.planner.create_timeline(assets=assets, ai_plan=ai_plan)
         render_plan = self.composer.compose(timeline=timeline)
         output_path = self.renderer.render(render_plan=render_plan)
