@@ -2,6 +2,7 @@ import subprocess
 from service.models.render_plan import RenderPlan
 from uuid import uuid4
 from pathlib import Path
+import imageio_ffmpeg
 
     # Responsibilities:
     #
@@ -14,7 +15,7 @@ from pathlib import Path
 
 class FFmpegRenderer:
     def render(self, render_plan: RenderPlan):
-        cmd = ["ffmpeg"]
+        cmd = [imageio_ffmpeg.get_ffmpeg_exe()]
         filename = str(uuid4())+ ".mp4"
         filter_inputs = []
         normalize = []

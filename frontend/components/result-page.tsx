@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import VideoGallery from "./video-gallery";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Download, RefreshCw, Sparkles } from "lucide-react";
+import { Download, RefreshCw } from "lucide-react";
 
 interface ResultPageProps {
   videoUrl: string | null;
@@ -16,6 +17,40 @@ export default function ResultPage({
   onRegenerate,
   onStartOver,
 }: ResultPageProps) {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!videoUrl || isDownloading) return;
+
+    try {
+      setIsDownloading(true);
+
+      const response = await fetch(videoUrl);
+
+      if (!response.ok) {
+        throw new Error("Unable to download video.");
+      }
+
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "impact-reel.mp4";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("The video could not be downloaded. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-border">
@@ -47,11 +82,9 @@ export default function ResultPage({
           </div>
 
           <div className="flex flex-col gap-3 max-w-md mx-auto">
-            <Button asChild>
-              <a href={videoUrl || "#"} download>
-                <Download className="mr-2 w-4 h-4" />
-                Download
-              </a>
+            <Button onClick={handleDownload} disabled={!videoUrl || isDownloading}>
+              <Download className="mr-2 w-4 h-4" />
+              {isDownloading ? "Downloading..." : "Download"}
             </Button>
 
             <Button variant="outline" onClick={onRegenerate}>

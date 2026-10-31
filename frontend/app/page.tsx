@@ -18,58 +18,77 @@ export default function Home() {
 
   const handleGetStarted = () => setState("upload");
 
-  const handleGenerate = async (
-    files: File[],
-    description: string,
-    musicFile: File | null,
-    captions: CaptionEntry[]
-  ) => {
-    // Reset state and navigate to processing page immediately for visual feedback
-    setResultVideo(null);
-    setJobId(null);
-    setState("processing");
+  const handleGenerationFailed = (error: string) => {
+  console.error("Video generation failed:", error);
+  alert(error);
+  setJobId(null);
+  setResultVideo(null);
+  setState("upload");
+};
 
-    try {
-      const formData = new FormData();
 
-      files.forEach((file) => {
-        formData.append("files", file);
-      });
+const handleGenerate = async (
+  files: File[],
+  description: string,
+  musicFile: File | null,
+  captions: CaptionEntry[]
+) => {
+  setResultVideo(null);
+  setJobId(null);
+  setState("processing");
 
-      formData.append("prompt", description);
+  try {
+    const formData = new FormData();
 
-      if (musicFile) {
-        formData.append("music_file", musicFile);
-      }
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
 
-      if (captions.length > 0) {
-        formData.append("captions_json", JSON.stringify(captions));
-      }
+    formData.append("prompt", description);
 
-      const res = await fetch(`${API_URL}/create-highlight`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const error = await res.json().catch(() => ({ detail: "Upload failed" }));
-        throw new Error(error.detail || "Upload failed");
-      }
-
-      const data = await res.json();
-
-      if (!data.video_url) {
-        throw new Error("No video URL returned from server");
-      }
-
-      setResultVideo(data.video_url);
-      setJobId(data.job_id);
-    } catch (err) {
-      console.error(err);
-      alert(err instanceof Error ? err.message : "Failed to generate video");
-      setState("upload");
+    if (musicFile) {
+      formData.append("music_file", musicFile);
     }
-  };
+
+    if (captions.length > 0) {
+      formData.append("captions_json", JSON.stringify(captions));
+    }
+
+    const res = await fetch(`${API_URL}/create-highlight`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({
+        detail: "Upload failed",
+      }));
+
+      throw new Error(error.detail || error.error || "Upload failed");
+    }
+
+    const data = await res.json();
+
+    if (!data.job_id) {
+      throw new Error("Backend did not return a job ID");
+    }
+
+    setJobId(data.job_id);
+
+  } catch (err) {
+    console.error("Generation failed:", err);
+
+    alert(
+      err instanceof Error
+        ? err.message
+        : "Failed to start video generation"
+    );
+
+    setJobId(null);
+    setState("upload");
+  }
+};
+
 
   return (
     <>
@@ -84,11 +103,18 @@ export default function Home() {
         />
       )}
 
-      {state === "processing" && (
+     {state === "processing" && (
         <ProcessingPage
           jobId={jobId}
-          videoReady={!!resultVideo}
-          onDone={() => setState("result")}
+          onDone={(videoUrl) => {
+            const fullVideoUrl = new URL(videoUrl, API_URL).toString();
+
+            console.log("Generated video URL:", fullVideoUrl);
+
+            setResultVideo(fullVideoUrl);
+            setState("result");
+          }}
+          onFailed={handleGenerationFailed}
         />
       )}
 

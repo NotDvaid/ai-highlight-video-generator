@@ -1,32 +1,33 @@
 
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from typing import List
-from pathlib import Path
 from datetime import datetime
 from dotenv import load_dotenv
+from service.video_orchestrator import VideoOrchestrator
 
 import os
 import shutil
 import uuid
 import subprocess
-import json
+import time
 
-from service.models.asset import Asset
-from service.ai.prompt_engine import accept_request
-from service.ai.media_analyzer import MediaAnalyzer
-from service.ai.planner import Planner
-from service.renderer.composer import Composer
-from service.renderer.ffmpeg_render import FFmpegRenderer
+from service.models.requests import AssetUpload
 from service.storage.minio_client import upload_file
-
+from service.jobs.job_manager import (
+    create_job,
+    get_job,
+    update_job,
+)
 
 load_dotenv()
 
 MAX_FILES = 10
 
 app = FastAPI()
+
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
@@ -55,6 +56,79 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/progress/{job_id}")
+def get_progress(job_id: str):
+    job = get_job(job_id)
+
+    if job is None:
+        return {"status": "not_found", "progress": 0}
+
+    return job
+
+def report_job_progress(job_id: str,progress: int,stage: str,):
+    update_job(job_id,progress=progress,stage=stage,)
+
+def process_video_job(job_id, assets, prompt, chronological):
+    update_job(
+        job_id,
+        status="processing",
+        progress=5,
+        stage="Starting video generation",
+    )
+
+    try:
+        orchestrator = VideoOrchestrator()
+
+        output_path = orchestrator.orchestrate(
+            assets=assets,
+            prompt=prompt,
+            chronological=chronological,
+            progress_callback=lambda progress, stage: report_job_progress(
+                job_id,
+                progress,
+                stage,
+            ),
+        )
+
+        if not output_path or not os.path.isfile(output_path):
+            raise FileNotFoundError(
+                "Video rendering finished, but the output file was not found."
+            )
+
+        video_filename = os.path.basename(output_path)
+        video_url = f"/videos/{video_filename}"
+
+        update_job(
+            job_id,
+            status="completed",
+            progress=100,
+            stage="Video ready",
+            video_url=video_url,
+            error=None,
+        )
+
+    except Exception as error:
+        print(f"[JOB ERROR] {job_id}: {error}")
+
+        update_job(
+            job_id,
+            status="failed",
+            error=str(error),
+            stage="Video generation failed",
+        )
+
+@app.post("/test-job")
+def test_job():
+    job_id = create_job()
+
+    update_job(
+        job_id,
+        status="processing",
+        progress=30,
+        stage="Analyzing media",
+    )
+
+    return {"job_id": job_id}
 
 def apply_prompt_edit(input_path, output_path, prompt):
     filters = []
@@ -122,14 +196,18 @@ def get_capture_time(file_path: str) -> datetime | None:
     except (ImportError, OSError, ValueError, KeyError, TypeError):
         pass
 
-    # 2. Fall back to FFprobe metadata.
+
+       # 2. Read video metadata using FFprobe.
     try:
+        import json
+        import subprocess
+        from zoneinfo import ZoneInfo
+
         result = subprocess.run(
             [
                 "ffprobe",
                 "-v", "quiet",
-                "-show_entries",
-                "format_tags=creation_time:stream_tags=creation_time",
+                "-show_entries", "format_tags=creation_time",
                 "-of", "json",
                 file_path,
             ],
@@ -140,27 +218,30 @@ def get_capture_time(file_path: str) -> datetime | None:
 
         metadata = json.loads(result.stdout)
 
-        tags = metadata.get("format", {}).get("tags", {})
-        capture_time = tags.get("creation_time")
+        creation_time = (
+            metadata.get("format", {})
+            .get("tags", {})
+            .get("creation_time")
+        )
 
-        if not capture_time:
+        if not creation_time:
             for stream in metadata.get("streams", []):
-                capture_time = stream.get(
-                    "tags", {}
-                ).get("creation_time")
+                creation_time = (
+                    stream.get("tags", {}).get("creation_time")
+                )
 
-                if capture_time:
+                if creation_time:
                     break
 
-        if capture_time:
+        if creation_time:
             parsed = datetime.fromisoformat(
-                capture_time.replace("Z", "+00:00")
+                creation_time.replace("Z", "+00:00")
             )
 
-            # Keep timestamps consistently comparable when some media
-            # includes timezone information and other media does not.
             if parsed.tzinfo is not None:
-                parsed = parsed.replace(tzinfo=None)
+                parsed = parsed.astimezone(
+                    ZoneInfo("America/New_York")
+                ).replace(tzinfo=None)
 
             return parsed
 
@@ -177,9 +258,13 @@ def get_capture_time(file_path: str) -> datetime | None:
 
 @app.post("/create-highlight")
 def create_highlight(
+    background_tasks: BackgroundTasks,
     files: List[UploadFile] = File(...),
     prompt: str = Form(""),
 ):
+    request_started = time.perf_counter()
+    stage_started = request_started
+
     if not files:
         return {"error": "Please upload at least one file."}
 
@@ -211,15 +296,10 @@ def create_highlight(
 
         capture_time = get_capture_time(file_path)
 
-        asset = Asset(
+        asset = AssetUpload(
             asset_id=asset_id,
             path=file_path,
             media_type=media_type,
-            duration=5.0,
-            width=1920,
-            height=1080,
-            has_audio=media_type == "video",
-            fps=30.0 if media_type == "video" else 0.0,
             capture_time=capture_time,
         )
 
@@ -229,20 +309,12 @@ def create_highlight(
 
         assets.append(asset)
 
-    # Analyze each uploaded asset.
-    analyzer = MediaAnalyzer()
-    analysis_results = []
 
-    for asset in assets:
-        analysis = analyzer.analyze(asset)
-        analysis_results.append(analysis)
-
-    # Generate the AI editing plan.
-    ai_plan = accept_request(
-        prompt,
-        assets,
-        analysis_results,
+    print(
+        f"[TIMING] Save files + timestamps: "
+        f"{time.perf_counter() - stage_started:.2f}s"
     )
+    stage_started = time.perf_counter()
 
     # Detect an explicit request for chronological ordering.
     prompt_lower = prompt.lower()
@@ -281,24 +353,19 @@ def create_highlight(
                 ),
                 "files_missing_timestamps": missing_timestamps,
             }
+    # Create a job to track video generation.
+    job_id = create_job()
 
-    # Build timeline and render the video.
-    planner = Planner()
-
-    timeline = planner.create_timeline(
+    # Run video generation in the background.
+    background_tasks.add_task(
+        process_video_job,
+        job_id,
         assets,
-        ai_plan,
-        chronological=chronological,
+        prompt,
+        chronological,
     )
 
-    composer = Composer()
-    renderer = FFmpegRenderer()
-
-    render_plan = composer.compose(timeline)
-    output_path = renderer.render(render_plan)
-
-    video_name = os.path.basename(output_path)
-
     return {
-        "video_url": f"http://localhost:8000/videos/{video_name}"
+        "job_id": job_id,
+        "status": "queued",
     }

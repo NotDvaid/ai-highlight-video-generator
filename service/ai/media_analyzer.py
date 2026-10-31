@@ -10,6 +10,8 @@ import base64
 from service import exceptions
 import mimetypes
 from google import genai
+import time
+from google.genai import errors
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 load_dotenv(BASE_DIR / ".env")
@@ -117,26 +119,47 @@ class MediaAnalyzer:
 
         elif asset.media_type == "video":
             video_file = gemini_client.files.upload(file=asset.path)
-            response = gemini_client.models.generate_content(
-                model="gemini-3.5-flash-lite",
-                contents=[
-                    video_file,
-                    """
-                    Analyze this video for an AI highlight video generator.
 
-                    Describe:
-                    - The main subjects.
-                    - The actions taking place.
-                    - Important moments that may be useful in a highlight video.
+            for attempt in range(3):
+                try:
+                    response = gemini_client.models.generate_content(
+                        model="gemini-3.5-flash-lite",
+                        contents=[
+                            video_file,
+                            """
+                            Analyze this video for an AI highlight video generator.
 
-                    Only describe what is supported by the footage.
-                    Return a concise description.
-                    """
-                ]
-            )
-            description = response.text
-            analysis = AssetAnalysis(
-                asset_id = str(asset.asset_id),
-                description = description
-                )
-            return analysis
+                            Describe:
+                            - The main subjects.
+                            - The actions taking place.
+                            - Important moments that may be useful in a highlight video.
+
+                            Only describe what is supported by the footage.
+                            Return a concise description.
+                            """
+                        ]
+                    )
+
+                    description = response.text
+
+                    if not description:
+                        raise ValueError(
+                            "Gemini returned an empty video description."
+                        )
+
+                    return AssetAnalysis(
+                        asset_id=str(asset.asset_id),
+                        description=description
+                    )
+
+                except errors.ServerError:
+                    if attempt == 2:
+                        raise
+
+                    delay = 2 ** attempt
+                    print(
+                        f"[RETRY] Gemini video analysis failed. "
+                        f"Retrying in {delay}s "
+                        f"(attempt {attempt + 1}/3)."
+                    )
+                    time.sleep(delay)
