@@ -10,5 +10,6 @@ opencv-python-headless
 numpy
 scikit-learn
 joblib
-minio
 pytest
+imageio-ffmpeg
+tzdata

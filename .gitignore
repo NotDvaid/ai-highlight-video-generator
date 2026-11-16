@@ -14,10 +14,15 @@ frontend/out/
 __pycache__/
 *.py[cod]
 *.pyo
+*.pyd
 .venv/
 venv/
 env/
 ENV/
+*.egg-info/
+.eggs/
+build/
+dist/
 
 # ==========================================
 # Environment Variables / Secrets
@@ -49,9 +54,14 @@ pnpm-debug.log*
 # ==========================================
 storage/minio.exe
 storage/minio-data/
+service/storage/minio-data/
+
 service/storage/*.mp4
 service/storage/*.mov
 service/storage/*.webm
+service/storage/*.avi
+service/storage/*.mkv
+
 service/uploads/
 
 # ==========================================
@@ -61,6 +71,7 @@ service/uploads/
 .mypy_cache/
 .ruff_cache/
 .coverage
+.coverage.*
 htmlcov/
 
 # ==========================================
@@ -69,5 +80,8 @@ htmlcov/
 .DS_Store
 Thumbs.db
 desktop.ini
-service/storage/minio-data/
+
+# ==========================================
+# Local Testing
+# ==========================================
 test.py

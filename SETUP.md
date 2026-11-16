@@ -1,261 +1,237 @@
-============================================================
-                AI VIDEO GENERATOR – SETUP GUIDE
-============================================================
+# AI VIDEO GENERATOR — SETUP GUIDE
 
-This project generates AI-powered highlight videos from
-uploaded media using the following technologies:
+## Project Overview
 
-   • Next.js        (Frontend)
-   • FastAPI        (Backend)
-   • FFmpeg         (Video Processing)
-   • MinIO          (Object Storage)
+This project generates AI-powered highlight videos from uploaded images and videos.
 
-Follow the steps below to run the project locally.
+### Technologies
+- Next.js — Frontend
+- FastAPI — Backend
+- FFmpeg — Video processing and rendering
+- Python — Backend processing
+- Node.js — Frontend tooling
 
-============================================================
-PREREQUISITES
-============================================================
+---
 
-Before starting, make sure the following are installed:
+## Prerequisites
 
-   • Node.js (v18 or newer recommended)
-   • Python (3.10 or newer)
-   • FFmpeg (installed and available in PATH)
-   • Git
+Install the following:
 
-You can verify installations with:
+- Node.js 18 or newer
+- Python 3.13
+- FFmpeg, available in PATH
+- Git
 
-   node -v
-   python --version
-   ffmpeg -version
+Verify installations:
 
+```bash
+node -v
+npm -v
+python --version
+ffmpeg -version
+```
 
-============================================================
-STEP 1 — CLONE THE REPOSITORY
-============================================================
+---
 
-Open a terminal and run:
+## Step 1 — Clone the Repository
 
-   git clone https://github.com/GGC-SD/AIvideoGenerator.git
-   cd AIvideoGenerator
+```bash
+git clone https://github.com/GGC-SD/AIvideoGenerator.git
+cd AIvideoGenerator
+```
 
+---
 
-============================================================
-STEP 2 — INSTALL NODE DEPENDENCIES
-============================================================
+## Step 2 — Install Node Dependencies
 
-From the project root folder run:
+From the project root:
 
-   npm install
+```bash
+npm install
+```
 
-Then install frontend dependencies:
+Install frontend dependencies:
 
-   cd frontend
-   npm install
-   cd ..
+```bash
+cd frontend
+npm install
+cd ..
+```
 
+---
 
-============================================================
-STEP 3 — INSTALL PYTHON DEPENDENCIES
-============================================================
+## Step 3 — Set Up Python
 
-Navigate to the AI service folder:
+Create a virtual environment from the project root:
 
-   cd ai_service
+```bash
+python -m venv .venv
+```
 
-Create a virtual environment (recommended):
-
-   python -m venv venv
-
-
-Activate the virtual environment
+Activate the environment.
 
 Windows:
 
-   venv\Scripts\activate
+```bash
+.venv\Scripts\activate
+```
 
-Mac / Linux:
+Install Python dependencies:
 
-   source venv/bin/activate
+```bash
+pip install -r requirements.txt
+```
 
+---
 
-Install Python requirements:
+## Step 4 — Project Structure
 
-   pip install -r requirements.txt
+```text
+AIvideoGenerator/
+│
+├── frontend/
+│
+├── service/
+│   ├── ai/
+│   ├── jobs/
+│   ├── media/
+│   ├── models/
+│   ├── renderer/
+│   ├── storage/
+│   ├── uploads/
+│   ├── server.py
+│   └── video_orchestrator.py
+│
+├── .venv/
+├── package.json
+└── requirements.txt
+```
 
+---
 
-Return to the root project folder:
+## Step 5 — Storage
 
-   cd ..
+MinIO is present in the project from an earlier storage implementation.
 
+It does not need to be downloaded, installed, or configured to run the current application.
 
-============================================================
-STEP 4 — INSTALL MINIO
-============================================================
+The project currently uses local filesystem storage for uploaded media and generated videos.
 
-MinIO is used to store generated highlight videos.
+Cloudflare R2 is planned as the future storage solution. MinIO will be removed as part of that transition.
 
-Download MinIO here:
+---
 
-    https://dl.min.io/server/minio/release/windows-amd64/minio.exe
+## Step 6 — Start the Application
 
+From the project root:
 
-After downloading **minio.exe**, place it in this folder:
+```bash
+npm run dev
+```
 
-   AIvideoGenerator/storage/
+This starts:
 
+- Next.js frontend
+- FastAPI backend
 
-Your project structure should look like this:
+---
 
-   AIvideoGenerator
-   ├── frontend
-   ├── ai_service
-   │    ├── ai
-   │    ├── storage
-   │    ├── video
-   │    └── server.py
-   ├── storage
-   │    ├── minio.exe
-   │    └── minio-data
-   ├── package.json
-   └── SETUP.txt
-
-
-============================================================
-STEP 5 — START THE PROJECT
-============================================================
-
-From the project root run:
-
-   npm run dev
-
-
-This command automatically starts:
-
-   ✔ MinIO Storage Server
-   ✔ FastAPI Backend
-   ✔ Next.js Frontend
-
-
-============================================================
-STEP 6 — ACCESS THE APPLICATION
-============================================================
+## Step 7 — Access the Application
 
 Frontend:
 
-   http://localhost:3000
+http://localhost:3000
 
+Backend:
 
-Backend API:
+http://localhost:8000
 
-   http://localhost:8000
+FastAPI documentation:
 
+http://localhost:8000/docs
 
-MinIO Dashboard:
+---
 
-   http://localhost:9000
+## How the System Works
 
+1. User uploads images and videos through the frontend.
+2. Files are sent to the FastAPI backend.
+3. Backend saves uploaded files locally.
+4. Capture timestamps are extracted when available.
+5. A background job is created.
+6. VideoOrchestrator coordinates video generation.
+7. MediaAnalyzer analyzes uploaded assets.
+8. Prompt Engine interprets editing instructions.
+9. Planner creates the video timeline.
+10. Composer creates the rendering plan.
+11. FFmpegRenderer renders the video.
+12. Generated MP4 is stored locally.
+13. Frontend retrieves job progress and the generated video.
 
-Login credentials:
+---
 
-   Username:  minioadmin
-   Password:  minioadmin
+## Running the Application
 
+From the project root:
 
-============================================================
-HOW THE SYSTEM WORKS
-============================================================
+```bash
+npm run dev
+```
 
-1. User uploads images or videos in the frontend
-2. Files are sent to the FastAPI backend
-3. FFmpeg processes the media
-4. The AI model selects highlight segments
-5. A final 60-second highlight video is generated
-6. The video is uploaded to MinIO storage
-7. The frontend displays the generated video preview
+Open:
 
+http://localhost:3000
 
-============================================================
-RUNNING THE SYSTEM
-============================================================
+---
 
-Whenever you want to start the project run:
+## Common Issues
 
-   npm run dev
+### Python Dependencies Failing
 
-Then open:
+Activate the virtual environment:
 
-   http://localhost:3000
+```bash
+.venv\Scripts\activate
+```
 
+Install dependencies:
 
-============================================================
-COMMON ISSUES
-============================================================
+```bash
+pip install -r requirements.txt
+```
 
-MINIO NOT STARTING
-
-Make sure this file exists:
-
-   storage/minio.exe
-
-
-------------------------------------------------------------
-
-PYTHON DEPENDENCIES FAILING
-
-Make sure the virtual environment is activated:
-
-   venv\Scripts\activate
-
-Then reinstall dependencies:
-
-   pip install -r ai_service/requirements.txt
-
-
-------------------------------------------------------------
-
-FFMPEG ERRORS
+### FFmpeg Errors
 
 Ensure FFmpeg is installed and available in PATH.
 
-Test with:
-
-   ffmpeg -version
-
-
-============================================================
-NOTES
-============================================================
-
-Large binaries such as `minio.exe` are not stored in the
-Git repository because GitHub limits files to 100MB.
-
-Each developer must download MinIO manually.
-
-============================================================
-CAPTIONS — OPTIONAL SETUP (melt / MLT Framework)
-============================================================
-
-The original audio from your uploaded videos is always
-preserved in the final highlight reel automatically.
-
-Captions are optional. If you want to use them, install
-the MLT framework's melt CLI:
-
-  Linux / Docker:
-    apt-get install melt ffmpeg
-
-  macOS:
-    brew install mlt ffmpeg
-
-  Windows:
-    Install Shotcut from https://www.shotcut.org/download/
-    Add the Shotcut install directory to your system PATH
-    (melt.exe is inside the Shotcut install folder)
-
 Verify:
-    melt --version
 
-If melt is NOT installed, the app works exactly as normal —
-captions are silently skipped with a console warning.
-============================================================
+```bash
+ffmpeg -version
+```
+
+### Frontend or Backend Not Starting
+
+Install root dependencies:
+
+```bash
+npm install
+```
+
+Install frontend dependencies:
+
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+Verify that the Python virtual environment exists and that backend dependencies are installed.
+
+---
+
+## Development Philosophy
+
+Inspect → Understand → Improve → Test → Repeat.
+
+Preserve existing functionality and avoid introducing unnecessary dependencies or architectural changes.

@@ -14,7 +14,6 @@ import subprocess
 import time
 
 from service.models.requests import AssetUpload
-from service.storage.minio_client import upload_file
 from service.jobs.job_manager import (
     create_job,
     get_job,
