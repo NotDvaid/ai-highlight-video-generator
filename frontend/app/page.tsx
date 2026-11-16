@@ -69,8 +69,16 @@ const handleGenerate = async (
 
     const data = await res.json();
 
+    if (data.error) {
+      throw new Error(
+        typeof data.error === "string"
+          ? data.error
+          : "The backend could not start video generation."
+      );
+    }
+
     if (!data.job_id) {
-      throw new Error("Backend did not return a job ID");
+      throw new Error("The backend response did not include a job ID.");
     }
 
     setJobId(data.job_id);
