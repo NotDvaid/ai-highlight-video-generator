@@ -1,5 +1,5 @@
 
-from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from typing import List
@@ -159,44 +159,45 @@ def apply_prompt_edit(input_path, output_path, prompt):
 
 def get_capture_time(file_path: str) -> datetime | None:
     """
-    Read image timestamps from EXIF first, then fall back to FFprobe
-    metadata for videos and other supported media containers.
+    Read the original capture timestamp from image EXIF metadata.
+    Fall back to video/container creation_time metadata via FFprobe.
+    Return None when the file contains no readable capture timestamp.
     """
 
-    # 1. Read image EXIF metadata.
+    # 1. Read image EXIF metadata through Pillow's EXIF interface.
+    # This supports EXIF stored in JPEG and WebP files, including EXIF
+    # values held in the nested Exif IFD rather than image.info["exif"].
     try:
         from PIL import Image
-        import piexif
 
         with Image.open(file_path) as image:
-            exif_bytes = image.info.get("exif")
+            exif = image.getexif()
 
-        if exif_bytes:
-            exif = piexif.load(exif_bytes)
+            if exif:
+                exif_ifd = exif.get_ifd(0x8769)  # Exif IFD
+                candidates = [
+                    exif_ifd.get(36867),  # DateTimeOriginal
+                    exif_ifd.get(36868),  # DateTimeDigitized
+                    exif.get(306),         # DateTime
+                ]
 
-            value = (
-                exif.get("Exif", {}).get(
-                    piexif.ExifIFD.DateTimeOriginal
-                )
-                or exif.get("0th", {}).get(
-                    piexif.ImageIFD.DateTime
-                )
-            )
+                for value in candidates:
+                    if isinstance(value, bytes):
+                        value = value.decode("utf-8", errors="ignore")
 
-            if value:
-                if isinstance(value, bytes):
-                    value = value.decode("utf-8")
-
-                return datetime.strptime(
-                    value,
-                    "%Y:%m:%d %H:%M:%S",
-                )
+                    if value:
+                        try:
+                            return datetime.strptime(
+                                str(value).strip(),
+                                "%Y:%m:%d %H:%M:%S",
+                            )
+                        except ValueError:
+                            continue
 
     except (ImportError, OSError, ValueError, KeyError, TypeError):
         pass
 
-
-       # 2. Read video metadata using FFprobe.
+    # 2. Read video/container creation time using FFprobe.
     try:
         import json
         import subprocess
@@ -345,13 +346,14 @@ def create_highlight(
         ]
 
         if missing_timestamps:
-            return {
-                "error": (
-                    "Chronological ordering was requested, but "
-                    "some files have no readable capture timestamp."
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Chronological ordering needs a readable capture "
+                    "timestamp for every file. Missing timestamps: "
+                    + ", ".join(missing_timestamps)
                 ),
-                "files_missing_timestamps": missing_timestamps,
-            }
+            )
     # Create a job to track video generation.
     job_id = create_job()
 
